@@ -1,9 +1,14 @@
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 const b=await chromium.launch(); const ctx=await b.newContext({viewport:{width:390,height:844}});
 const p=await ctx.newPage();
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 await p.goto('file://'+new URL('../prototype/hcf-builder.html', import.meta.url).pathname,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(700);
 await p.locator('.tile').nth(0).click(); await p.waitForTimeout(350);
-await p.locator('.sizes button').nth(1).click(); await p.waitForTimeout(120);
+await pickSize(1);
 await p.locator('.qtys button').nth(0).click(); await p.waitForTimeout(120);
 await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(300);
 await p.locator('#moNext').click(); await p.waitForTimeout(500);

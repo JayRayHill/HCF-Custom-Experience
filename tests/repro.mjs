@@ -2,6 +2,11 @@ import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 const url='file://'+new URL('../prototype/hcf-builder.html', import.meta.url).pathname;
 const b=await chromium.launch(); const ctx=await b.newContext({viewport:{width:1440,height:900}});
 const p=await ctx.newPage(); const L=(...a)=>console.log(...a);
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 await p.goto(url,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(600);
 const snap = async (tag) => {
   const s = await p.evaluate(()=>{
@@ -14,7 +19,7 @@ const snap = async (tag) => {
 };
 L('Fresh load, then open Single Wall and pick 16 oz + 5,000:');
 await p.locator('.tile').nth(0).click(); await p.waitForTimeout(300);
-await p.locator('.sizes button').nth(2).click(); await p.waitForTimeout(150);
+await pickSize(2);
 await p.locator('.qtys button').nth(2).click(); await p.waitForTimeout(200);
 await snap('start');
 for (const name of ['Cold Cups','Coffee Sleeves','Mason Jars','Coffee Cups','All products']) {

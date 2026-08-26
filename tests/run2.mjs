@@ -3,6 +3,11 @@ const url = 'file://' + new URL('../prototype/hcf-builder.html', import.meta.url
 const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await ctx.newPage();
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 const errs = [];
 page.on('pageerror', e => errs.push('PAGEERROR: ' + e.message));
 page.on('console', m => { if (m.type()==='error' && !/photos\.json|ERR_CONNECTION/.test(m.text())) errs.push('CONSOLE: '+m.text()); });
@@ -12,14 +17,14 @@ const T = async () => (await page.evaluate(() => Array.from(document.querySelect
 
 // cups
 await page.locator('.tile').nth(0).click(); await page.waitForTimeout(250);
-await page.locator('.sizes button').nth(1).click(); await page.waitForTimeout(120);
+await pickSize(1);
 await page.locator('.qtys button').nth(2).click(); await page.waitForTimeout(120);
 await page.locator('.qtys button').nth(3).click(); await page.waitForTimeout(120);
 await page.locator('.config-foot .btn--primary').click(); await page.waitForTimeout(250);
 // jars — via the "anything else" pill, and use "Not sure yet"
 const tabs = await T();
 await page.locator('.added__pills .tab', { hasText: 'Mason Jars' }).click(); await page.waitForTimeout(300);
-await page.locator('.sizes button').nth(0).click(); await page.waitForTimeout(120);
+await pickSize(0);
 await page.locator('.qtys button', { hasText: 'Not sure yet' }).click(); await page.waitForTimeout(150);
 L('unsure hint:', await page.evaluate(()=>document.querySelector('.foothint').textContent));
 await page.locator('.config-foot .btn--primary').click(); await page.waitForTimeout(250);
@@ -28,7 +33,7 @@ L('tally:', await page.evaluate(()=>document.querySelector('#tally').textContent
 L('\n--- D4: reopen a size already on the quote ---');
 await page.locator('#tabs .tab', { hasText: 'Coffee Cups' }).first().click(); await page.waitForTimeout(250);
 await page.locator('.tile').nth(0).click(); await page.waitForTimeout(300);   // categories no longer auto-open a product
-await page.locator('.sizes button').nth(1).click(); await page.waitForTimeout(200);
+await pickSize(1);
 L('size chips:', await page.evaluate(()=>Array.from(document.querySelectorAll('.sizes button')).map(b=>b.textContent.replace(/\s+/g,' ').trim()).join(' | ')));
 L('prefilled qtys:', await page.evaluate(()=>Array.from(document.querySelectorAll('.qtys button')).filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>b.textContent.split('\n')[0].trim())));
 L('buttons:', await page.evaluate(()=>Array.from(document.querySelectorAll('.config-foot .btn')).map(b=>b.textContent+(b.disabled?' [off]':'')).join(' | ')));

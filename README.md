@@ -40,7 +40,9 @@ Two things are prototype scaffolding and come out at migration:
 The scripts drive the prototype in Chromium via Playwright.
 
 ```
-node tests/final.mjs      # 33 assertions covering the audit findings
+node tests/final.mjs      # 39 assertions covering the audit findings and the data corrections
+node tests/back.mjs       # back navigation, and its parity with the browser's own
+node tests/phone.mjs      # the required phone field
 node tests/run3.mjs       # horizontal-overflow sweep, 360–1440px, all five screens
 node tests/regress.mjs    # session persistence and history behaviour
 node tests/mob.mjs        # mobile layout measurements at 375px
@@ -51,8 +53,8 @@ directory. They import Playwright by absolute path
 (`/opt/node22/lib/node_modules/playwright/index.mjs`) — change that line if your
 install lives elsewhere.
 
-Current state: 33/33 pass, no horizontal overflow at any width on any screen, no
-console errors.
+Current state: 39/39 in `final.mjs`, 15/15 in `back.mjs`, 15/15 in `phone.mjs`,
+no horizontal overflow at any width on any screen, no console errors.
 
 ---
 
@@ -75,35 +77,56 @@ Two rules shape everything downstream, and both are easy to get wrong:
 interface — a total would imply a single order quantity that the customer never
 committed to.
 
-**Quantities move a whole case at a time.** Each product carries a `per` value
-(its case size), so the stepper can only land on multiples of it. The review
-screen says "5 cases of 1,000" rather than a bare number.
+**Quantities move a whole case at a time.** Each *size* carries a `per` value
+(its case size — see below for why it cannot sit on the product), so the stepper
+can only land on multiples of it. The review screen says "5 cases of 1,000"
+rather than a bare number.
 
 ## Real product data
 
-| Product | Minimum | Case | Turnaround |
-| --- | --- | --- | --- |
-| Single Wall Paper Cup | 5,000 | 1,000 | 3–4 weeks |
-| Double Wall Paper Cup | 5,000 | 1,000 | 3–4 weeks |
-| Clear PET Cold Cup | 5,000 | 1,000 | 3–4 weeks |
-| Paper Cold Cup | 5,000 | 1,000 | 3–4 weeks |
-| Cup Sleeve | 2,500 | 2,500 | 3–4 weeks |
-| Plastic Mason Jar | 147 (one case) | 147 | 4–6 weeks |
+| Product | Sizes | Minimum | Case | Turnaround |
+| --- | --- | --- | --- | --- |
+| Single Wall Paper Cup | 8 · 10 · 12 · 16 · 20 · 24 | 5,000 | 1,000 up to 16 oz, 500 at 20 & 24 | 4–6 weeks |
+| Double Wall Paper Cup | 8 · 10 · 12 · 16 · 20 | 5,000 | 500 at every size | 4–6 weeks |
+| Clear PET Cold Cup | 8 · 12 · 16 · 20 · 24 · 32 | 5,000 | 1,000, 500 at 32 oz | 4–6 weeks |
+| Paper Cold Cup | 12 · 16 · 22 · 24 | 5,000 | 1,000 | 4–6 weeks |
+| Cup Sleeve | one, fits 10–24 oz | 5,000 | 1,000 | 4–6 weeks |
+| Plastic Mason Jar | 16 oz only | 1,029 (7 cases) | 147 | 4–6 weeks |
 
-Minimums and turnarounds are confirmed. **The case sizes for cups (1,000) and
-sleeves (2,500) are assumptions and still need confirming** — only the jar's 147
-came from HCF. These print on the review screen, so an error is
-customer-visible.
+Measured from live products, not written from memory. Five of the six families
+carried a wrong number before this pass.
 
-Turnaround is quoted from proof approval, not from order date. Screen `#b3`
-compares the customer's stated deadline against the slowest item on their
-request and warns when it's tight rather than letting them find out later.
+**Case size sits on the size, not the family.** It changes mid-range on single
+wall and PET, so it cannot live at family level. Told 1,000 where it is really
+500, a shop ordering 5,000 cups expects five cases and takes delivery of ten.
+
+**Quantity tiers carry savings badges, never prices.** The four cup families
+share 5,000 / 10,000 / 30,000 / 50,000 with "save about 17/35/43%" on the three
+upper tiers. The badges are keyed by quantity rather than parallel to the tier
+list, because the failure mode of parallel arrays is not a missing badge, it is
+"50,000 · save 17%" on a live page, which looks fine and so nobody catches it.
+
+**Turnaround runs from design approval**, not from the order date, and every
+screen that quotes it says so.
+
+Three things are still open, all flagged in the source:
+
+- **The jar minimum.** The stated minimum is 1,000 jars, but they ship 147 to a
+  case, so the real floor is seven cases — 1,029. Quoting 1,000 would name a
+  number nobody can order.
+- **The jar quantity ladder** (`tiers: [1029, 2058, 4116, 8232]`) is whole case
+  counts, not pricing. The cup ladder does not fit a family this size and no jar
+  ladder has been supplied.
+- **Whether the discount ladder is the same for every family.** 17/35/43 is
+  applied to all four cup families; sleeves and jars carry none.
+
+Screen `#b3` compares the customer's stated deadline against the slowest item on
+their request and warns when it's tight, rather than letting them find out later.
 
 ---
 
 ## Still open
 
-- Confirm the two case sizes above.
 - Theme spacing parity: to make the prototype's margins match the live site
   exactly, the theme's `.container` padding at mobile, the real `--space-unit`,
   `.section--padded` top/bottom at mobile, and the two-up grid `gap` at mobile.

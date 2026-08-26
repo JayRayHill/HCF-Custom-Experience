@@ -3,6 +3,11 @@ const url = 'file://' + new URL('../prototype/hcf-builder.html', import.meta.url
 const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 const errs = [];
 page.on('pageerror', e => errs.push('PAGEERROR: ' + e.message));
 await page.goto(url, { waitUntil: 'domcontentloaded' }); await page.waitForTimeout(700);
@@ -20,7 +25,7 @@ L(await page.evaluate(()=>{const c=document.querySelector('.config'),r=c.getBoun
 return `scrollY=${Math.round(window.scrollY)} (page moved? ${window.scrollY>0?'YES':'NO'})\nconfig top=${Math.round(r.top)} fold=${Math.round(fold)}\nSIZE chips top=${sr?Math.round(sr.top):'n/a'} → ${sr&&sr.top<fold&&sr.top>0?'VISIBLE':'not visible'}`;}));
 
 L('\n--- B5 tap targets at 390px ---');
-await page.locator('.sizes button').nth(1).click(); await page.waitForTimeout(150);
+await pickSize(1);
 await page.locator('.qtys button').nth(2).click(); await page.waitForTimeout(150);
 await page.locator('.qtys button').nth(3).click(); await page.waitForTimeout(150);
 await page.locator('.lidrow input').check(); await page.waitForTimeout(150);

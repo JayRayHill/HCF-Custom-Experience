@@ -2,6 +2,11 @@ import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 const url='file://'+new URL('../prototype/hcf-builder.html', import.meta.url).pathname;
 const b=await chromium.launch(); const ctx=await b.newContext({viewport:{width:1440,height:900}});
 const p=await ctx.newPage(); const errs=[]; p.on('pageerror',e=>errs.push(e.message));
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 const L=(...a)=>console.log(...a);
 await p.goto(url,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(600);
 
@@ -18,7 +23,7 @@ L('   → lid is on the request with no product to attach it to?');
 
 L('\n=== EDGE 2: an unsure line through review ===');
 await p.locator('.lidrow input').uncheck(); await p.waitForTimeout(150);
-await p.locator('.sizes button').nth(1).click(); await p.waitForTimeout(150);
+await pickSize(1);
 await p.locator('.qtys button',{hasText:'Not sure yet'}).click(); await p.waitForTimeout(150);
 await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(300);
 await p.locator('#toB2').click(); await p.waitForTimeout(350);
@@ -42,7 +47,7 @@ L('\n=== EDGE 4: added-pill jump to a 2-product category ===');
 await p.locator('#backB1').click(); await p.waitForTimeout(300);
 await p.locator('#tabs .tab',{hasText:'Coffee Cups'}).click(); await p.waitForTimeout(250);
 await p.locator('.tile').nth(1).click(); await p.waitForTimeout(300);
-await p.locator('.sizes button').nth(0).click(); await p.waitForTimeout(150);
+await pickSize(0);
 await p.locator('.qtys button').nth(0).click(); await p.waitForTimeout(150);
 await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(300);
 await p.locator('.added__pills .tab',{hasText:'Cold Cups'}).click(); await p.waitForTimeout(700);

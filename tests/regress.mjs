@@ -3,12 +3,17 @@ const url='file://'+new URL('../prototype/hcf-builder.html', import.meta.url).pa
 const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:900}});
 const page=await ctx.newPage();
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 const errs=[]; page.on('pageerror',e=>errs.push('PAGEERROR: '+e.message));
 await page.goto(url,{waitUntil:'domcontentloaded'}); await page.waitForTimeout(600);
 const L=(...a)=>console.log(...a);
 const build = async () => {
   await page.locator('.tile').nth(0).click(); await page.waitForTimeout(250);
-  await page.locator('.sizes button').nth(1).click(); await page.waitForTimeout(120);
+  await pickSize(1);
   await page.locator('.qtys button').nth(2).click(); await page.waitForTimeout(120);
   await page.locator('.config-foot .btn--primary').click(); await page.waitForTimeout(300);
 };

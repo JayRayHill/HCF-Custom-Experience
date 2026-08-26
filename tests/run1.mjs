@@ -3,6 +3,11 @@ const url = 'file://' + new URL('../prototype/hcf-builder.html', import.meta.url
 const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await ctx.newPage();
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 const errs = [];
 page.on('pageerror', e => errs.push('PAGEERROR: ' + e.message));
 page.on('console', m => { if (m.type()==='error' && !/photos\.json|ERR_CONNECTION/.test(m.text())) errs.push('CONSOLE: '+m.text()); });
@@ -26,7 +31,7 @@ L('qty chips:', await page.evaluate(() => Array.from(document.querySelectorAll('
 L('hint before size:', await page.evaluate(() => document.querySelector('.foothint').textContent));
 L('lid row:', await page.evaluate(() => { const l=document.querySelector('.lidrow'); return l?l.textContent.trim():'NONE'; }));
 
-await page.locator('.sizes button').nth(1).click(); await page.waitForTimeout(200);
+await pickSize(1);
 await page.locator('.qtys button').nth(2).click(); await page.waitForTimeout(200);
 L('hint with ONE qty (F4):', await page.evaluate(() => document.querySelector('.foothint').textContent));
 L('button:', await page.evaluate(() => document.querySelector('.config-foot .btn').textContent));
@@ -45,7 +50,7 @@ L('tally:', await page.evaluate(() => document.querySelector('#tally').textConte
 L('rail line:', await page.evaluate(() => document.querySelector('.line').textContent.replace(/\s+/g,' ').trim()));
 
 L('\n--- D1: peek at another category and come back ---');
-await page.locator('.sizes button').nth(2).click(); await page.waitForTimeout(150);
+await pickSize(2);
 await page.locator('.qtys button').nth(2).click(); await page.waitForTimeout(150);
 const before = await page.evaluate(() => ({ open: document.querySelector('.ctitle h3').textContent, size: Array.from(document.querySelectorAll('.sizes button')).filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>b.textContent.trim()), qty: Array.from(document.querySelectorAll('.qtys button')).filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>b.textContent.split('\n')[0].trim()) }));
 L('staged:', JSON.stringify(before));

@@ -391,6 +391,10 @@
   @media (min-width: 68rem) {
     .config-fields { grid-template-columns: auto 1fr; gap: var(--sp6); }
     .config-fields > div:first-child { padding-right: var(--sp6); border-right: 1px solid var(--gxl); }
+    /* A one-size family renders no size column, so the divider would be a rule
+       with nothing on either side of it and quantities in half the width. */
+    .config-fields--single { grid-template-columns: 1fr; }
+    .config-fields--single > div:first-child { padding-right: 0; border-right: none; }
   }
 
   .fieldlabel {
@@ -416,6 +420,15 @@
 
   .size { min-width: 72px; }
   .qty { min-width: 92px; }
+  /* Percentages only, never a per-unit figure: a price that later moves for
+     ink coverage or a plate charge is the surprise their buyers already
+     complain about. And "about", because the source numbers are 16.89 and
+     35.38 — two decimals on an indicative discount reads as a promise. */
+  .qty .save {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--rd); line-height: 1.1; white-space: nowrap;
+  }
+  .qty[aria-pressed="true"] .save { color: var(--rl); }
   .n--word { font-size: 13px; font-family: var(--body-font-family); font-weight: 700; }
 
   /* E2: an attach item the builder can actually quote, offered where the cup
@@ -978,13 +991,13 @@
       <p class="eyebrow">Last step</p>
       <h1 class="h-section" tabindex="-1">Where do we <em>send it?</em></h1>
       <p class="body-copy">A real person reads this and emails your quote, usually within one business day. We're open Mon–Thu 9am–5pm MT, so anything sent after Thursday comes back Monday.</p>
-      <p class="whynoprice">There's no shelf price for custom print, so this is how you get one. We'll only call if you leave a number and it's quicker.</p>
+      <p class="whynoprice">There's no shelf price for custom print, so this is how you get one. Your quote arrives by email either way.</p>
     </div>
     <form class="form" id="contactForm" novalidate>
       <div class="frow"><label for="f-name">Your name <span class="req">Required</span></label><input id="f-name" autocomplete="name"><p class="err" id="e-name" hidden></p></div>
       <div class="frow"><label for="f-biz">Business name <span class="req">Required</span></label><input id="f-biz" autocomplete="organization"><p class="err" id="e-biz" hidden></p></div>
       <div class="frow"><label for="f-email">Email <span class="req">Required</span></label><input id="f-email" type="email" autocomplete="email"><p class="hint">We'll send a copy of this request so you have it on file.</p><p class="err" id="e-email" hidden></p></div>
-      <div class="frow"><label for="f-phone">Phone <span class="opt">Optional</span></label><input id="f-phone" type="tel" autocomplete="tel"><p class="hint">The fastest way to sort out details, if you'd rather talk.</p></div>
+      <div class="frow"><label for="f-phone">Phone <span class="req">Required</span></label><input id="f-phone" type="tel" autocomplete="tel"><p class="hint">In case a detail on your spec needs a two minute call instead of three emails.</p><p class="err" id="e-phone" hidden></p></div>
       <div class="screen-foot">
         <button class="btn btn--primary btn--lg" type="submit" id="sendBtn">Send my request</button>
         <p class="gate" id="formGate" hidden></p>
@@ -1229,49 +1242,78 @@
      the case size, so quantities can only move a whole case at a time. `lid`
      names an attach item the builder can actually quote — never mention one it
      cannot. */
+  /* Measured from live products, not written from memory. Five of the six
+     families carried a wrong number before this: wrong sizes, wrong case
+     counts, wrong minimums. `per` is the expensive one — it sits on the SIZE,
+     not the family, because case size changes mid-range on single wall and
+     PET. Told 1,000 where it is 500, a shop ordering 5,000 cups expects five
+     cases and takes delivery of ten. At integration each of these rows is a
+     product and `per` is its my_fields.units_per_case. */
   var PRODUCTS = [
     { id: "sw", group: "Coffee Cups", name: "Single Wall Paper Cup", shape: "cup", cold: 0,
       unit: "cups", blurb: "Standard hot cup. Needs a sleeve for hot drinks.",
-      moq: 5000, per: 1000, lead: "3–4 weeks", leadMax: 4,
+      moq: 5000, lead: "4–6 weeks", leadMax: 6,
       note: "Standard 90mm rim, the common size, so most shops' existing lids fit.",
       lid: "Also quote matching 90mm lids",
-      sizes: [["8 oz", 34, 60], ["12 oz", 38, 78], ["16 oz", 40, 94], ["20 oz", 42, 104]],
-      tiers: [5000, 10000, 25000, 50000] },
+      /* label, art width, art height, units per case */
+      sizes: [["8 oz", 34, 58, 1000], ["10 oz", 36, 66, 1000], ["12 oz", 38, 78, 1000],
+              ["16 oz", 40, 94, 1000], ["20 oz", 42, 104, 500], ["24 oz", 44, 112, 500]],
+      tiers: [5000, 10000, 30000, 50000],
+      disc: { 10000: 17, 30000: 35, 50000: 43 } },
     { id: "dw", group: "Coffee Cups", name: "Double Wall Paper Cup", shape: "cup", cold: 0,
       unit: "cups", blurb: "Insulated. No sleeve needed.",
-      moq: 5000, per: 1000, lead: "3–4 weeks", leadMax: 4,
+      moq: 5000, lead: "4–6 weeks", leadMax: 6,
       note: "Two layers of board with an air gap, comfortable to hold without a sleeve.",
       lid: "Also quote matching 90mm lids",
-      sizes: [["8 oz", 36, 62], ["12 oz", 40, 80], ["16 oz", 42, 96], ["20 oz", 44, 106]],
-      tiers: [5000, 10000, 25000, 50000] },
+      sizes: [["8 oz", 36, 60, 500], ["10 oz", 38, 68, 500], ["12 oz", 40, 80, 500],
+              ["16 oz", 42, 96, 500], ["20 oz", 44, 106, 500]],
+      tiers: [5000, 10000, 30000, 50000],
+      disc: { 10000: 17, 30000: 35, 50000: 43 } },
     { id: "clear", group: "Cold Cups", name: "Clear PET Cold Cup", shape: "pet", cold: 1,
       unit: "cups", blurb: "See-through plastic for iced drinks.",
-      moq: 5000, per: 1000, lead: "3–4 weeks", leadMax: 4,
+      moq: 5000, lead: "4–6 weeks", leadMax: 6,
       note: "See the drink through the cup: iced lattes, cold brew, layered drinks. Best with a simple 1–2 colour logo.",
       lid: "Also quote matching cold cup lids",
-      sizes: [["12 oz", 38, 76], ["16 oz", 40, 90], ["20 oz", 42, 100], ["24 oz", 44, 108]],
-      tiers: [5000, 10000, 25000, 50000] },
+      sizes: [["8 oz", 34, 62, 1000], ["12 oz", 38, 76, 1000], ["16 oz", 40, 90, 1000],
+              ["20 oz", 42, 100, 1000], ["24 oz", 44, 108, 1000], ["32 oz", 47, 120, 500]],
+      tiers: [5000, 10000, 30000, 50000],
+      disc: { 10000: 17, 30000: 35, 50000: 43 } },
     { id: "cpc", group: "Cold Cups", name: "Paper Cold Cup", shape: "cup", cold: 1,
       unit: "cups", blurb: "Opaque paper for iced drinks, prints edge to edge.",
-      moq: 5000, per: 1000, lead: "3–4 weeks", leadMax: 4,
+      moq: 5000, lead: "4–6 weeks", leadMax: 6,
       note: "Opaque like a hot cup. Choose this when you want full-colour artwork wrapping the whole cup.",
       lid: "Also quote matching cold cup lids",
-      sizes: [["12 oz", 38, 77], ["16 oz", 40, 92], ["22 oz", 43, 106]],
-      tiers: [5000, 10000, 25000, 50000] },
+      sizes: [["12 oz", 38, 77, 1000], ["16 oz", 40, 92, 1000],
+              ["22 oz", 43, 106, 1000], ["24 oz", 44, 110, 1000]],
+      tiers: [5000, 10000, 30000, 50000],
+      disc: { 10000: 17, 30000: 35, 50000: 43 } },
+    /* One sleeve fits the whole range, so there is no size step to render. */
     { id: "sleeve", group: "Coffee Sleeves", name: "Cup Sleeve", shape: "sleeve", cold: 0,
-      unit: "sleeves", blurb: "Slides onto a single wall cup.",
-      moq: 2500, per: 2500, lead: "3–4 weeks", leadMax: 4,
-      note: "Slides onto a single wall cup. Nothing we make fits the 8 oz, so choose double wall if you want that one insulated.",
-      sizes: [["Fits 12 & 16 oz", 46, 52], ["Fits 20 & 24 oz", 50, 56]],
-      tiers: [2500, 5000, 10000, 25000] },
+      unit: "sleeves", blurb: "Slides onto a single wall cup. One size fits 10 to 24 oz.",
+      moq: 5000, lead: "4–6 weeks", leadMax: 6,
+      note: "Kraft board, one size, fits 10 through 24 oz. Nothing we make fits the 8 oz, so choose double wall if you want that one insulated.",
+      sizes: [["Fits 10–24 oz", 48, 54, 1000]],
+      tiers: [5000, 10000, 30000, 50000],
+      disc: {} },
+    /* The 16 is the only jar that exists. The other two were never products. */
     { id: "jar", group: "Mason Jars", name: "Plastic Mason Jar", shape: "jar", cold: 1,
       unit: "jars", blurb: "Shatterproof jar for shakes, floats and iced drinks.",
-      moq: 147, per: 147, lead: "4–6 weeks", leadMax: 6,
-      note: "Shatterproof PET, printed direct to the jar. One case is 147 jars, which is the minimum.",
+      /* The stated minimum is 1,000 jars, but they ship 147 to a case and you
+         cannot buy part of one, so the real floor is seven cases. Quoting
+         1,000 would be a number nobody can actually order. */
+      moq: 1029, lead: "4–6 weeks", leadMax: 6,
+      note: "Shatterproof PET, printed direct to the jar. One case is 147 jars.",
       lid: "Also quote matching jar lids",
-      sizes: [["8 oz", 40, 72], ["12 oz", 44, 86], ["16 oz", 48, 98]],
-      tiers: [147, 294, 735, 1470] }
+      sizes: [["16 oz", 48, 98, 147]],
+      /* PROVISIONAL: whole case counts above the minimum (7, 14, 28, 56).
+         The cup ladder does not fit a family this size and no jar ladder has
+         been supplied, so these are arithmetic, not pricing. */
+      tiers: [1029, 2058, 4116, 8232],
+      disc: {} }
   ];
+
+  /* Case size lives on the size, so every read goes through here. */
+  function perOf(p, i) { return p.sizes[i][3]; }
 
   var STEPS = [
     { id: "b1", label: "Products" },
@@ -1337,6 +1379,9 @@
 
   function clearState() {
     try { window.localStorage.removeItem(STATE_KEY); } catch (e) {}
+    /* Two keys, not one. Leaving the photo key behind starts the customer's
+       next quote half-populated with the last one's uploads. */
+    try { window.localStorage.removeItem(PHOTO_KEY); } catch (e) {}
   }
 
   function restoreState() {
@@ -1665,10 +1710,10 @@
           '<div class="specs">' +
             '<div class="specs__item"><div class="specs__label">Minimum order</div>' +
               '<div class="specs__value">' + fmt(p.moq) + " " + p.unit + "</div>" +
-              '<div class="specs__caption">per size</div></div>' +
+              '<div class="specs__caption">' + (p.sizes.length > 1 ? "per size" : "one size") + "</div></div>" +
             '<div class="specs__item"><div class="specs__label">Ready in</div>' +
               '<div class="specs__value">' + p.lead + "</div>" +
-              '<div class="specs__caption">after proof</div></div>' +
+              '<div class="specs__caption">from design approval</div></div>' +
           "</div>" +
         "</div>";
       b.onclick = function () { openProduct(p, true); };
@@ -1721,12 +1766,18 @@
         shot(p.id, p.shape, p.sizes[p.sizes.length - 1][1], p.sizes[p.sizes.length - 1][2], p.name) +
       "</div>" +
       '<div class="ctext"><h3 class="h-card">' + p.name + "</h3>" +
-      '<span class="lead">Minimum ' + fmt(p.moq) + " " + p.unit + " per size · cases of " +
-      fmt(p.per) + " · ready in " + p.lead + " after proof</span></div>";
+      '<span class="lead">Minimum ' + fmt(p.moq) + " " + p.unit +
+      (p.sizes.length > 1 ? " per size" : "") + " · ready in " +
+      p.lead + " from design approval</span></div>";
     d.appendChild(head);
 
     var fields = document.createElement("div");
-    fields.className = "config-fields";
+    fields.className = "config-fields";   /* --single is added below once the size count is known */
+
+    /* Sleeves and jars each come in one size now, so the step is a question
+       with one answer. Pick it for them and render nothing. */
+    var oneSize = p.sizes.length === 1;
+    if (oneSize && state.size === null) state.size = 0;
 
     var f1 = document.createElement("div");
     f1.innerHTML = '<div class="fieldlabel">Size</div>';
@@ -1762,16 +1813,21 @@
       sizes.appendChild(b);
     });
     f1.appendChild(sizes);
-    fields.appendChild(f1);
+    if (oneSize) fields.className += " config-fields--single";
+    else fields.appendChild(f1);
 
     var existingIdx = state.size !== null ? inQuote(p.id, p.sizes[state.size][0]) : -1;
     var existing = existingIdx > -1 ? state.quote[existingIdx] : null;
 
     var f2 = document.createElement("div");
+    /* Case size used to sit in the header as one number for the whole family.
+       It cannot: single wall ships 1,000 up to 16 oz and 500 above it. It
+       belongs here, where it changes with the size that was just picked. */
+    var qtyHint = existing ? "Editing what's on your quote"
+      : state.size === null ? "Minimum " + fmt(p.moq) + ". Pick more than one to compare."
+      : "Minimum " + fmt(p.moq) + ", in cases of " + fmt(perOf(p, state.size)) + ".";
     f2.innerHTML = '<div class="fieldlabel">How many?' +
-      '<span class="hintnote">' + (existing
-        ? "Editing what's on your quote"
-        : "Minimum " + fmt(p.moq) + ". Pick more than one to compare.") + "</span></div>";
+      '<span class="hintnote">' + qtyHint + "</span></div>";
     var qs = document.createElement("div");
     qs.className = "qtys";
     p.tiers.forEach(function (v, i) {
@@ -1780,7 +1836,13 @@
       b.setAttribute("aria-pressed", (!state.unsure && state.qtys.indexOf(v) > -1) ? "true" : "false");
       /* The case count restated the same number in the factory's unit. What a
          first-time buyer needs is how long it lasts at their counter. */
-      b.innerHTML = '<span class="n">' + fmt(v) + "</span>";
+      /* Keyed lookup, never tiers.indexOf(): the failure mode of parallel
+         arrays is not a missing badge, it is "50,000 · save 17%" on a live
+         page, which looks fine and so nobody catches it. The baseline tier
+         carries no entry and therefore no badge, which is correct. */
+      var pct = p.disc && p.disc[v];
+      b.innerHTML = '<span class="n">' + fmt(v) + "</span>" +
+        (pct ? '<span class="save">save about ' + pct + "%</span>" : "");
       b.onclick = function () {
         state.justAdded = null;
         if (state.unsure) { state.unsure = false; state.qtys = []; }
@@ -1858,7 +1920,7 @@
         var line = {
           pid: p.id, name: p.name, shape: p.shape,
           size: p.sizes[state.size][0], qtys: staged,
-          per: p.per, cold: p.cold, unsure: state.unsure
+          per: perOf(p, state.size), cold: p.cold, unsure: state.unsure
         };
         state.quote.push(line);
         stage({ name: line.size + " " + line.name, qtys: line.qtys.slice(), unsure: line.unsure });
@@ -2122,7 +2184,7 @@
             ? "We'll start from the " + fmt(p.moq) + " minimum and advise"
             : (q.qtys.length > 1
               ? "We'll price each of these separately"
-              : "Minimum " + fmt(p.moq) + " " + p.unit + " · ready in " + p.lead)) + "</div>";
+              : "Minimum " + fmt(p.moq) + " " + p.unit + " · ready in " + p.lead + " from design approval")) + "</div>";
 
         var rows = document.createElement("div");
         rows.className = "rqtys";
@@ -2287,7 +2349,7 @@
     if (slowest === null) return null;
     if (slowest > want) {
       return { clash: true, text: "Heads up: your " + slowName + " runs " + slowest +
-        " weeks after proof approval, so " + answer.toLowerCase() +
+        " weeks from design approval, so " + answer.toLowerCase() +
         " is tight. Keep the date and we'll come back with rush options, or call (480) 428-1999." };
     }
     return { clash: false, text: "That works for everything on your list." };
@@ -2433,8 +2495,7 @@
     row("Reference", requestRef(), false);
     row("Sent to", esc(($("#f-email").value || "").trim()), false);
     row("Contact", esc(($("#f-name").value || "").trim() + " · " + ($("#f-biz").value || "").trim()), false);
-    var ph = ($("#f-phone").value || "").trim();
-    if (ph) row("Phone", esc(ph), false);
+    row("Phone", esc(($("#f-phone").value || "").trim()), false);
 
     $("#sentTo").innerHTML = "Copy sent to <b>" + esc(($("#f-email").value || "").trim()) +
       "</b>. Check your inbox in the next few minutes. Your reference is <b>" + requestRef() + "</b>.";
@@ -2459,7 +2520,14 @@
     { id: "f-name",  err: "e-name",  msg: "We need a name to put on the quote." },
     { id: "f-biz",   err: "e-biz",   msg: "Your shop's name is fine, whatever's on the sign." },
     { id: "f-email", err: "e-email", msg: "Add your email so we can send the quote.",
-      bad: "That doesn't look like an email address. Check it and we'll send your quote there." }
+      re: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+      bad: "That doesn't look like an email address. Check it and we'll send your quote there." },
+    /* Forgiving on shape, strict on substance: people type (480) 428-1999,
+       480.428.1999 and +1 480 428 1999, and all three are the same number.
+       Count the digits instead of policing the punctuation. */
+    { id: "f-phone", err: "e-phone", msg: "Add a number in case we need to check a detail.",
+      re: /^\D*(\d\D*){10,15}$/,
+      bad: "That doesn't look like a phone number. Ten digits is enough." }
   ];
 
   function clearErrors() {
@@ -2498,7 +2566,7 @@
       var v = el.value.trim();
       if (!v) { markError(f, f.msg); bad.push(f); return; }
       /* Non-blank was the only test, so "jane@" sent happily and died silently. */
-      if (f.bad && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { markError(f, f.bad); bad.push(f); }
+      if (f.re && !f.re.test(v)) { markError(f, f.bad); bad.push(f); }
     });
     if (bad.length) {
       var gate = $("#formGate");

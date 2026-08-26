@@ -1,6 +1,11 @@
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 const b=await chromium.launch(); const ctx=await b.newContext({viewport:{width:1590,height:1000}});
 const p=await ctx.newPage(); const errs=[]; p.on('pageerror',e=>errs.push(e.message));
+const pickSize = async (n) => {
+  /* Sleeves and jars come in one size, so there is no size row to click. */
+  if (await p.locator('.sizes button').count() === 0) return;
+  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+};
 await p.goto('file://'+new URL('../prototype/hcf-builder.html', import.meta.url).pathname,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(700);
 const L=(...a)=>console.log(...a);
 L('--- tiles ---');
@@ -27,11 +32,11 @@ for (const [tab, idx] of [['Coffee Cups',0],['Coffee Cups',1],['Cold Cups',0],['
 
 L('\n--- review boxes maths ---');
 await p.locator('#tabs .tab',{hasText:'Mason Jars'}).first().click(); await p.waitForTimeout(300);
-await p.locator('.sizes button').nth(0).click(); await p.waitForTimeout(120);
+await pickSize(0);
 await p.locator('.qtys button').nth(2).click(); await p.waitForTimeout(120);
 await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(300);
 await p.locator('#tabs .tab',{hasText:'Coffee Sleeves'}).first().click(); await p.waitForTimeout(300);
-await p.locator('.sizes button').nth(0).click(); await p.waitForTimeout(120);
+await pickSize(0);
 await p.locator('.qtys button').nth(1).click(); await p.waitForTimeout(120);
 await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(300);
 await p.locator('#toB2').click(); await p.waitForTimeout(400);
