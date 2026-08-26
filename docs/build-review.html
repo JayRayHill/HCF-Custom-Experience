@@ -1,0 +1,361 @@
+<title>Custom Builder Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+  :root {
+    --ground: #EEF0EC;
+    --surface: #F8F9F7;
+    --surface-2: #E4E7E2;
+    --ink: #161A17;
+    --ink-2: #454C48;
+    --muted: #737B76;
+    --line: #CFD5CF;
+    --accent: #0E5C48;
+    --accent-soft: #D9E7E1;
+
+    --sev-block: #9E2B42;
+    --sev-block-bg: #F3DDE2;
+    --sev-launch: #8A6A16;
+    --sev-launch-bg: #F3E9D2;
+    --sev-polish: #4B6472;
+    --sev-polish-bg: #DDE6EB;
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --col: 60rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #121614;
+      --surface: #1A1F1C;
+      --surface-2: #232926;
+      --ink: #E6EAE6;
+      --ink-2: #B4BCB7;
+      --muted: #8B948E;
+      --line: #2E3531;
+      --accent: #56BE9C;
+      --accent-soft: #17332B;
+
+      --sev-block: #E8788D;
+      --sev-block-bg: #35191F;
+      --sev-launch: #D9B44A;
+      --sev-launch-bg: #2E2716;
+      --sev-polish: #9EC0D0;
+      --sev-polish-bg: #1B262C;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #121614;
+    --surface: #1A1F1C;
+    --surface-2: #232926;
+    --ink: #E6EAE6;
+    --ink-2: #B4BCB7;
+    --muted: #8B948E;
+    --line: #2E3531;
+    --accent: #56BE9C;
+    --accent-soft: #17332B;
+
+    --sev-block: #E8788D;
+    --sev-block-bg: #35191F;
+    --sev-launch: #D9B44A;
+    --sev-launch-bg: #2E2716;
+    --sev-polish: #9EC0D0;
+    --sev-polish-bg: #1B262C;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    margin: 0;
+    padding: 0 1.5rem 8rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  .masthead { max-width: var(--col); margin: 0 auto; padding: 5rem 0 2.5rem; border-bottom: 2px solid var(--ink); }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.6875rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+    margin: 0 0 1.5rem;
+  }
+
+  h1 {
+    font-family: var(--display); font-weight: 800;
+    font-size: clamp(2.5rem, 7vw, 4.25rem); line-height: 0.98;
+    letter-spacing: -0.032em; text-wrap: balance; margin: 0 0 1.25rem;
+  }
+
+  .standfirst { font-size: 1.25rem; line-height: 1.5; color: var(--ink-2); max-width: 46ch; margin: 0 0 2.5rem; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 0.5rem 2.5rem; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .meta b { color: var(--ink-2); font-weight: 500; }
+
+  section { max-width: var(--col); margin: 0 auto; padding-top: 4.5rem; }
+
+  h2 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(1.5rem, 3.4vw, 2rem); line-height: 1.12;
+    letter-spacing: -0.02em; text-wrap: balance; margin: 0 0 1.25rem;
+  }
+
+  h3 { font-family: var(--display); font-weight: 700; font-size: 1.0625rem; letter-spacing: -0.008em; margin: 0; }
+
+  p { margin: 0 0 1.15rem; max-width: 66ch; }
+  p:last-child { margin-bottom: 0; }
+  .lede { font-size: 1.125rem; color: var(--ink-2); }
+
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  code { font-family: var(--mono); font-size: 0.875em; background: var(--surface-2); padding: 0.08em 0.32em; border-radius: 2px; }
+
+  .kicker {
+    font-family: var(--mono); font-size: 0.6875rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    margin: 0 0 0.75rem; display: block;
+  }
+
+  .frame { border: 1px solid var(--line); border-left: 3px solid var(--accent); background: var(--surface); padding: 1.5rem 1.75rem; margin: 1.5rem 0 0; }
+  .frame p { font-size: 1rem; }
+
+  /* ---------- findings ---------- */
+
+  .findings { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2rem; }
+
+  .finding { border: 1px solid var(--line); background: var(--surface); padding: 1.5rem 1.75rem; border-top-width: 3px; border-top-style: solid; }
+  .finding[data-sev="block"]  { border-top-color: var(--sev-block); }
+  .finding[data-sev="launch"] { border-top-color: var(--sev-launch); }
+  .finding[data-sev="polish"] { border-top-color: var(--sev-polish); }
+
+  .fhead { display: flex; align-items: baseline; gap: 0.85rem; flex-wrap: wrap; margin-bottom: 0.85rem; }
+  .fnum { font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.1em; color: var(--muted); }
+  .chip {
+    font-family: var(--mono); font-size: 0.5625rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.15rem 0.45rem; border-radius: 2px; margin-left: auto; white-space: nowrap;
+  }
+  .chip[data-sev="block"]  { color: var(--sev-block);  background: var(--sev-block-bg); }
+  .chip[data-sev="launch"] { color: var(--sev-launch); background: var(--sev-launch-bg); }
+  .chip[data-sev="polish"] { color: var(--sev-polish); background: var(--sev-polish-bg); }
+
+  .finding p { font-size: 0.9875rem; color: var(--ink-2); margin-bottom: 0.85rem; max-width: 64ch; }
+
+  .fix {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 0.85rem 1.1rem; font-size: 0.9375rem; line-height: 1.55; color: var(--ink);
+  }
+  .fix span {
+    font-family: var(--mono); font-size: 0.625rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+    display: block; margin-bottom: 0.3rem;
+  }
+
+  /* ---------- keep list ---------- */
+
+  .keep { list-style: none; padding: 0; margin: 2rem 0 0; border-top: 1px solid var(--line); }
+  .keep li { border-bottom: 1px solid var(--line); padding: 1.05rem 0; display: grid; grid-template-columns: 1.5rem 1fr; gap: 1rem; }
+  .keep .t { color: var(--accent); font-family: var(--mono); font-size: 0.8125rem; padding-top: 0.1rem; }
+  .keep b { display: block; font-family: var(--display); font-weight: 700; font-size: 1rem; margin-bottom: 0.15rem; }
+  .keep span.d { font-size: 0.9375rem; color: var(--ink-2); }
+
+  .closer {
+    max-width: var(--col); margin: 5rem auto 0; padding-top: 2.5rem;
+    border-top: 2px solid var(--ink); font-family: var(--mono);
+    font-size: 0.75rem; color: var(--muted); line-height: 1.7;
+  }
+</style>
+
+<header class="masthead">
+  <p class="eyebrow">Build review &nbsp;·&nbsp; before this becomes a theme section</p>
+  <h1>Custom Builder Review</h1>
+  <p class="standfirst">What I'd fix, in the order I'd fix it, based on reading the code rather than looking at the screens.</p>
+  <div class="meta">
+    <div><b>Hot Cup Factory</b> — custom quote builder</div>
+    <div>20 Aug 2026</div>
+    <div>12 findings · 3 blocking</div>
+  </div>
+</header>
+
+<section>
+  <span class="kicker">The short version</span>
+  <h2>The design holds. The implementation has three real holes.</h2>
+  <p class="lede">The interaction model is sound and I'd ship it — the two-minute thesis survives contact with real photography, the quote vocabulary is consistent everywhere, and the layout is built on your actual theme tokens rather than approximations of them.</p>
+  <p>But it is a prototype wearing production clothes, and one thing in it is actively untrue. Below, ordered by what would embarrass you soonest.</p>
+
+  <div class="frame">
+    <p><strong>Read the severities as calendar time, not as judgement.</strong> <em>Blocking</em> means don't show it to a customer or a stakeholder until it's fixed. <em>Before launch</em> means it must be right when this becomes a real page. <em>Polish</em> means it will bother you eventually.</p>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Findings</span>
+  <h2>What I'd fix</h2>
+
+  <div class="findings">
+
+    <article class="finding" data-sev="block">
+      <div class="fhead"><span class="fnum">01</span><h3>The header makes a promise the code doesn't keep</h3><span class="chip" data-sev="block">Blocking</span></div>
+      <p>The header reads <em>"Your progress saves automatically."</em> It doesn't. The only thing in local storage is the product photos and the alignment toggle — the quote itself lives in a JavaScript variable and dies the moment the tab closes or the page reloads.</p>
+      <p>This isn't a missing nicety. It was a <strong>decided design point</strong>: the whole argument for asking email at screen four instead of screen one was that the list survives without it. Without persistence, the late-email decision loses its safety net and someone who wanders off loses everything.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Persist <code>state.quote</code> and <code>state.answers</code> to local storage on every mutation, restore on load, and clear on successful submit. Roughly twenty lines — the photo persistence already there is the template. Until it exists, delete the header sentence rather than leave it lying.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="block">
+      <div class="fhead"><span class="fnum">02</span><h3>Browser Back destroys the whole session</h3><span class="chip" data-sev="block">Blocking</span></div>
+      <p>All five screens are one document with <code>hidden</code> toggled by JavaScript. There is no history integration at all — no <code>pushState</code>, no <code>popstate</code>, no hash. So Back doesn't go from Contact to Details; it leaves the builder entirely and takes the quote with it.</p>
+      <p>On mobile this is worse than it sounds. Back is a system gesture, not a button people choose deliberately, and a multi-screen flow that punishes it feels broken rather than opinionated.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Push a history entry per screen and restore from <code>popstate</code>. With finding 01 done, restoring state is trivial. Also fixes deep-linking, which you'll want anyway when the collection page CTA needs to open the builder on a specific product.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="block">
+      <div class="fhead"><span class="fnum">03</span><h3>Focus is dropped on every screen change</h3><span class="chip" data-sev="block">Blocking</span></div>
+      <p>Changing screens hides one <code>&lt;section&gt;</code> and shows another, but nothing moves focus. The only <code>.focus()</code> calls in the file are on a form field and a textarea. So after clicking Continue, the browser's focus stays on a button that no longer exists on screen.</p>
+      <p>For a keyboard user the next Tab starts from nowhere. For a screen reader user nothing is announced at all — the page appears not to have responded.</p>
+      <div class="fix">
+        <span>Fix</span>
+        On screen change, move focus to the new screen's <code>&lt;h1&gt;</code> with <code>tabindex="-1"</code>. Three lines, and it fixes the announcement problem at the same time.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="launch">
+      <div class="fhead"><span class="fnum">04</span><h3>The tabs have half an ARIA implementation</h3><span class="chip" data-sev="launch">Before launch</span></div>
+      <p>The category row declares <code>role="tablist"</code> and <code>role="tab"</code>, but there is no <code>aria-controls</code>, no <code>role="tabpanel"</code> on what they control, and no arrow-key handling anywhere in the file.</p>
+      <p>Half-implemented ARIA is worse than none. Declaring the role promises a screen reader that arrow keys will work and that each tab owns a panel; neither is true, so assistive tech describes a control that behaves differently from how it just announced itself.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Either complete it — <code>aria-controls</code>, a real tabpanel, arrow-key roving <code>tabindex</code> — or drop the roles and let them be what they actually are: buttons that filter a grid. The second is honest, cheaper, and I'd take it.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="launch">
+      <div class="fhead"><span class="fnum">05</span><h3>Form errors are a red border and nothing else</h3><span class="chip" data-sev="launch">Before launch</span></div>
+      <p>Submitting the contact screen with an empty required field focuses it and sets <code>borderColor</code> to orange. No message, no <code>aria-invalid</code>, no summary. A colourblind user gets no signal whatsoever, and a screen reader user gets silence.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Add a per-field message tied by <code>aria-describedby</code>, set <code>aria-invalid</code>, and use the native <code>required</code> attribute so the browser helps rather than being bypassed by <code>novalidate</code>.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="launch">
+      <div class="fhead"><span class="fnum">06</span><h3>The disabled Continue never says why</h3><span class="chip" data-sev="launch">Before launch</span></div>
+      <p>On Details, Continue stays disabled until the in-hands date is answered. Correct behaviour, invisible reason. A disabled control with no explanation is one of the most reliable ways to strand someone — they can see the way forward and can't tell what's blocking it.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Keep the button enabled and validate on click, scrolling to the unanswered required question. Failing that, put a line beside it: <em>"Answer the first question to continue."</em>
+      </div>
+    </article>
+
+    <article class="finding" data-sev="launch">
+      <div class="fhead"><span class="fnum">07</span><h3>Talk to us is still an alert box</h3><span class="chip" data-sev="launch">Before launch</span></div>
+      <p>Two <code>window.alert()</code> stubs remain — the Talk to us route and the sample box handoff. The second is a genuine placeholder. The first is a <strong>decided design element</strong> from the flow map: the second door, the escape hatch, and the thing that catches every customer the builder doesn't suit.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Build it as a real route: phone, booking link, short note field — and critically, carry the customer's position in the builder with it, so a rep sees what they were looking at when they gave up. That context was the entire argument for having an escape hatch rather than a dead end.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="launch">
+      <div class="fhead"><span class="fnum">08</span><h3>Nothing is announced when the quote changes</h3><span class="chip" data-sev="launch">Before launch</span></div>
+      <p>There are no <code>aria-live</code> regions in the file. Adding a product, removing a line, and the totals changing are all silent to a screen reader — the most important feedback in the interface has no non-visual channel.</p>
+      <div class="fix">
+        <span>Fix</span>
+        One polite live region on the quote rail totals. <em>"12 oz Single Wall added. 2 products, 8,000 units."</em>
+      </div>
+    </article>
+
+    <article class="finding" data-sev="polish">
+      <div class="fhead"><span class="fnum">09</span><h3>Every state change re-parses 138KB of images</h3><span class="chip" data-sev="polish">Polish</span></div>
+      <p><code>renderTiles()</code> rebuilds the whole grid via <code>innerHTML</code>, and there are eleven call sites — tab change, product select, add, remove. Each rebuild re-creates six <code>&lt;img&gt;</code> elements whose <code>src</code> is an inline base64 data URI, so the browser re-decodes them rather than reusing anything.</p>
+      <p>At six products it's survivable. It won't be if the custom range grows, and it's the kind of thing that reads as sluggishness on a mid-range phone without ever showing up as a bug.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Build tiles once and toggle <code>aria-pressed</code> and the badge on state change instead of re-rendering. When this moves to Shopify the data URIs become real image URLs anyway, which solves the decode cost but not the churn.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="polish">
+      <div class="fhead"><span class="fnum">10</span><h3>Ten instances of 9px type</h3><span class="chip" data-sev="polish">Polish</span></div>
+      <p>The spec labels, chip captions and category headers all sit at 9px, several at <code>rgba(0,0,0,0.55)</code> on white. That combination is below what most accessibility guidance treats as a floor, and it's the text carrying your minimums and lead times — the two facts that decide whether a product is even viable.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Lift to 10–11px and darken to around <code>0.65</code> opacity. The house spec-grid pattern does use 9px labels, so this is a deliberate divergence from the theme rather than a correction to it — worth making consciously.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="polish">
+      <div class="fhead"><span class="fnum">11</span><h3>Six lifestyle photos, six different environments</h3><span class="chip" data-sev="polish">Polish</span></div>
+      <p>Kitchen counter, beige studio sweep, café interior, blue sky, grey concrete, white countertop. Individually they're good shots. In a row of six tiles they read as six unrelated pictures rather than one product range.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Either crop tighter so the product fills more of the frame and the background stops competing, or shoot the tile set on one consistent ground and keep the lifestyle shots for the configurator, where there's room for them to work.
+      </div>
+    </article>
+
+    <article class="finding" data-sev="polish">
+      <div class="fhead"><span class="fnum">12</span><h3>Nothing is instrumented</h3><span class="chip" data-sev="polish">Polish</span></div>
+      <p>There are no analytics events anywhere. The flow map argued for tracking the split between the two doors, which tabs get opened without action, and where people abandon — none of that exists yet, and it's the evidence you'd need to know whether any of this worked.</p>
+      <div class="fix">
+        <span>Fix</span>
+        Instrument before launch, not after: door choice, product opened, add to quote, screen reached, abandon point, submit. Cheap to add now, impossible to backfill.
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Integration</span>
+  <h2>Three seams to design before wiring</h2>
+  <p>All three are hardcoded, all three are meant to be. But each has a decision inside it worth making deliberately rather than discovering during implementation.</p>
+
+  <ul class="keep">
+    <li><span class="t">→</span><span class="d"><b>Catalog from Shopify</b>The builder derives its categories from a <code>group</code> field on each product, so nothing drifts out of sync. The open question is where minimum, case size and lead time live — they aren't standard Shopify fields, so they need metafields, and that schema should be designed before anything reads it.</span></li>
+    <li><span class="t">→</span><span class="d"><b>Submission to HubSpot</b>The quote is structured data — line items with product, size and an array of quantities. Squeezing that into a flat form submission loses exactly the structure that justified the project. Worth landing it as a properly typed record a rep can sort and filter.</span></li>
+    <li><span class="t">→</span><span class="d"><b>Images from products</b>Photos are currently inline base64 in the page source. In production they should be Shopify product images, which removes the page weight and means marketing can swap a photo without touching code.</span></li>
+  </ul>
+</section>
+
+<section>
+  <span class="kicker">Leave alone</span>
+  <h2>What's working, and why I'd not touch it</h2>
+
+  <ul class="keep">
+    <li><span class="t">✓</span><span class="d"><b>The no-typing thesis survived</b>Every decision in the flow is still a tap on something visual until the four contact fields. That held through six rounds of changes, which is the real test of a design principle.</span></li>
+    <li><span class="t">✓</span><span class="d"><b>Quote vocabulary is consistent everywhere</b>No cart, no checkout, no order, no total. The reassurance line sits under every continue button. That discipline is easy to lose the moment someone else edits a string, so it's worth writing down.</span></li>
+    <li><span class="t">✓</span><span class="d"><b>One image function, five surfaces</b>Tiles, configurator, quote rail, review and the setup panel all route through <code>shot()</code>. Swapping drawings for photography touched one function rather than four renderers, and swapping to Shopify URLs will do the same.</span></li>
+    <li><span class="t">✓</span><span class="d"><b>Theme tokens, not approximations</b>4px space unit, 10px card radius, Canopy easing, the house spec-grid pattern. When this becomes a section it should drop into the theme without a visual reconciliation pass.</span></li>
+    <li><span class="t">✓</span><span class="d"><b>Comparing quantities</b>The one feature that came from you rather than the brief, and the one most likely to save a round trip per enquiry. The "or" phrasing and the comparing tag are doing real work — they're what stops a rep reading two quantities as one big order.</span></li>
+  </ul>
+</section>
+
+<section>
+  <span class="kicker">Order of work</span>
+  <h2>If I had a day</h2>
+  <p>Findings 01 through 03 are half a day together and they share a foundation — persistence makes history restoration trivial, and history restoration makes focus management obvious. Do them as one piece rather than three tickets.</p>
+  <p>Then 07, the Talk to us route, because it's the only remaining stub that represents a decision rather than a placeholder, and because a builder without its escape hatch is a narrower product than the one we designed.</p>
+  <p>Everything else can wait for the real build — but instrument it (12) before launch, not after. It's the only item on this list that gets harder rather than easier with time.</p>
+</section>
+
+<div class="closer">
+  Build review · Hot Cup Factory custom quote builder<br>
+  Findings from reading the source, not the screens. Product data, minimums, case sizes and lead times remain placeholders.
+</div>

@@ -1,0 +1,12 @@
+import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
+const b=await chromium.launch(); const ctx=await b.newContext({viewport:{width:1440,height:1000},deviceScaleFactor:2});
+const p=await ctx.newPage();
+await p.goto('file://'+new URL('../prototype/hcf-builder.html', import.meta.url).pathname,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(600);
+await p.locator('.tile').nth(1).click(); await p.waitForTimeout(400);
+await p.locator('.sizes button').nth(3).click(); await p.waitForTimeout(120);
+await p.locator('.qtys button').nth(1).click(); await p.waitForTimeout(120);
+await p.locator('.lidrow input').check(); await p.waitForTimeout(150);
+await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(450);
+await p.locator('.config').screenshot({path:'shots/v7-config.png'});
+console.log('checkbox computed:', await p.evaluate(()=>{const i=document.querySelector('.lidrow input');const c=getComputedStyle(i);return JSON.stringify({appearance:c.appearance,accent:c.accentColor,w:c.width});}));
+await b.close();

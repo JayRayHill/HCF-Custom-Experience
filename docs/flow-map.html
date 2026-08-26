@@ -1,0 +1,735 @@
+<title>Custom Builder Flow Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+  :root {
+    --ground: #EEF0EC;
+    --surface: #F8F9F7;
+    --surface-2: #E4E7E2;
+    --ink: #161A17;
+    --ink-2: #454C48;
+    --muted: #737B76;
+    --line: #CFD5CF;
+    --line-2: #B9C1BA;
+    --accent: #0E5C48;
+    --accent-soft: #D9E7E1;
+    --signal: #9E2B42;
+    --signal-soft: #F0DBE0;
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --col: 60rem;
+    --wide: 74rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #121614;
+      --surface: #1A1F1C;
+      --surface-2: #232926;
+      --ink: #E6EAE6;
+      --ink-2: #B4BCB7;
+      --muted: #8B948E;
+      --line: #2E3531;
+      --line-2: #3B433E;
+      --accent: #56BE9C;
+      --accent-soft: #17332B;
+      --signal: #E8788D;
+      --signal-soft: #341A20;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #121614;
+    --surface: #1A1F1C;
+    --surface-2: #232926;
+    --ink: #E6EAE6;
+    --ink-2: #B4BCB7;
+    --muted: #8B948E;
+    --line: #2E3531;
+    --line-2: #3B433E;
+    --accent: #56BE9C;
+    --accent-soft: #17332B;
+    --signal: #E8788D;
+    --signal-soft: #341A20;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    margin: 0;
+    padding: 0 1.5rem 8rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: var(--col); margin: 0 auto; }
+
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    max-width: var(--col);
+    margin: 0 auto;
+    padding: 5rem 0 2.5rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1.5rem;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 7vw, 4.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.032em;
+    text-wrap: balance;
+    margin: 0 0 1.25rem;
+  }
+
+  .standfirst {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 44ch;
+    margin: 0 0 2.5rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .meta b { color: var(--ink-2); font-weight: 500; }
+
+  /* ---------- sections ---------- */
+
+  section { max-width: var(--col); margin: 0 auto; padding-top: 4.5rem; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3.4vw, 2rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0 0 1.25rem;
+  }
+
+  h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    letter-spacing: -0.008em;
+    margin: 0;
+  }
+
+  p { margin: 0 0 1.15rem; max-width: 66ch; }
+  p:last-child { margin-bottom: 0; }
+
+  .lede { font-size: 1.125rem; color: var(--ink-2); }
+
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  code { font-family: var(--mono); font-size: 0.875em; background: var(--surface-2); padding: 0.08em 0.32em; border-radius: 2px; }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+    display: block;
+  }
+
+  /* ---------- callout ---------- */
+
+  .frame {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    padding: 1.5rem 1.75rem;
+    margin: 0 0 1.5rem;
+  }
+  .frame p { font-size: 1rem; }
+
+  /* ---------- figures ---------- */
+
+  figure {
+    margin: 2.5rem 0 0;
+    width: min(var(--wide), calc(100vw - 3rem));
+    margin-left: calc((min(var(--col), 100vw - 3rem) - min(var(--wide), 100vw - 3rem)) / 2);
+  }
+
+  .scroller { overflow-x: auto; padding-bottom: 0.5rem; }
+
+  .dg { display: block; width: 100%; min-width: 44rem; height: auto; }
+
+  figcaption {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-top: 1.25rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--line);
+    max-width: 60ch;
+  }
+
+  /* svg internals */
+  .node rect { fill: var(--surface); stroke: var(--line-2); stroke-width: 1.5; }
+  .node.acc rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+  .node.quiet rect { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+
+  .n-t { font-family: var(--display); font-size: 13.5px; font-weight: 700; fill: var(--ink); text-anchor: middle; }
+  .n-s { font-family: var(--mono); font-size: 10px; fill: var(--muted); text-anchor: middle; }
+
+  .flow { fill: none; stroke: var(--ink-2); stroke-width: 1.5; }
+  .flow.acc { stroke: var(--accent); stroke-width: 2; }
+  .flow.dash { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+
+  #fig1 .flow { marker-end: url(#f1a); }
+  #fig1 .flow.acc { marker-end: url(#f1b); }
+  #fig1 .flow.dash { marker-end: url(#f1c); }
+  #fig2 .flow { marker-end: url(#f2a); }
+  #fig2 .flow.acc { marker-end: url(#f2b); }
+  #fig2 .flow.dash { marker-end: url(#f2c); }
+
+  .mk { fill: var(--ink-2); }
+  .mk-acc { fill: var(--accent); }
+  .mk-mut { fill: var(--muted); }
+
+  .lbl { font-family: var(--mono); font-size: 10px; fill: var(--muted); text-anchor: middle; }
+  .lbl.s { text-anchor: start; }
+  .lbl.e { text-anchor: end; }
+  .lbl.on { fill: var(--accent); }
+
+  /* ---------- screen cards ---------- */
+
+  .screens { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 2rem; }
+
+  .screen { background: var(--surface); padding: 1.75rem; }
+  .screen.alt { background: var(--surface-2); }
+
+  .screen-head { display: flex; align-items: baseline; gap: 0.9rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+
+  .sid {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.15rem 0.45rem;
+    white-space: nowrap;
+  }
+  .screen.alt .sid { color: var(--ink-2); border-color: var(--line-2); }
+
+  .screen-note { font-family: var(--mono); font-size: 0.6875rem; color: var(--muted); margin-left: auto; }
+
+  dl { display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.7rem 1.5rem; margin: 0; }
+  dt {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 0.28rem;
+  }
+  dd { margin: 0; font-size: 0.9875rem; line-height: 1.55; color: var(--ink-2); }
+  dd b { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 44rem) {
+    dl { grid-template-columns: 1fr; gap: 0.25rem; }
+    dt { padding-top: 0.6rem; }
+  }
+
+  /* ---------- decisions ---------- */
+
+  .decisions { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2rem; }
+
+  .decision {
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--signal);
+    background: var(--surface);
+    padding: 1.5rem 1.75rem;
+  }
+
+  .dnum {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--signal);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .decision h3 { margin-bottom: 0.85rem; }
+  .decision p { font-size: 0.9875rem; color: var(--ink-2); margin-bottom: 0.85rem; }
+
+  .rec {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 0.85rem 1.1rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .rec span {
+    font-family: var(--mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  /* ---------- needs ---------- */
+
+  .needs { list-style: none; padding: 0; margin: 2rem 0 0; border-top: 1px solid var(--line); }
+  .needs li { border-bottom: 1px solid var(--line); padding: 1.15rem 0; display: grid; grid-template-columns: 2rem 1fr; gap: 1rem; }
+  .needs .n { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); padding-top: 0.2rem; }
+  .needs b { display: block; font-family: var(--display); font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+  .needs span.d { font-size: 0.9375rem; color: var(--ink-2); }
+
+  .closer {
+    max-width: var(--col);
+    margin: 5rem auto 0;
+    padding-top: 2.5rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+</style>
+
+<header class="masthead">
+  <p class="eyebrow">Stage 1 of 4 &nbsp;·&nbsp; Flow map</p>
+  <h1>Custom Builder Flow Map</h1>
+  <p class="standfirst">Every screen and decision point in the new custom order experience, drawn before anything gets designed.</p>
+  <div class="meta">
+    <div><b>Hot Cup Factory</b> — custom collections</div>
+    <div>20 Aug 2026</div>
+    <div>Nothing connected · no Shopify · no HubSpot</div>
+  </div>
+</header>
+
+<section>
+  <span class="kicker">What this is</span>
+  <h2>The skeleton, before the skin</h2>
+  <p class="lede">This is the cheap stage. Everything here is a decision that costs nothing to change now and a lot to change after it's built. The goal is to settle the shape of the experience — what screens exist, in what order, and what happens when someone goes off the happy path.</p>
+
+  <div class="frame">
+    <p>Two things are deliberately <em>not</em> settled yet. <strong>Branding</strong> — the Hot Cup Factory design system has landed and is held for stage 3 on purpose; this document is styled as a working document, not as a Hot Cup Factory artifact, so the structure gets judged on its own merits before the brand makes it look finished. And <strong>the catalog</strong> — product names and counts below are placeholders standing in for whatever your real custom range turns out to be. The structure is built to flex around it.</p>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">The entry</span>
+  <h2>Two doors, one destination</h2>
+  <p>The collection pages keep everything that earns them organic traffic — the banner copy, the SEO block, the FAQ. The only thing that changes is the module sitting where the HubSpot form is today. In its place: a fork.</p>
+  <p>The important property is that <strong>both doors end up in the same place.</strong> Someone who isn't ready to spec an order still becomes a lead, just a different kind, with the note attached that explains what they actually need.</p>
+
+  <figure>
+    <div class="scroller">
+      <svg id="fig1" class="dg" viewBox="0 0 1000 470" role="img" aria-label="Flow diagram: a collection page forks into two doors. The primary door leads to the builder, which submits a full product spec. The secondary door leads to a short form and calendar. Both routes converge on a single HubSpot lead record, which routes to a sales rep.">
+        <defs>
+          <marker id="f1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="mk"></path>
+          </marker>
+          <marker id="f1b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="mk-acc"></path>
+          </marker>
+          <marker id="f1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="mk-mut"></path>
+          </marker>
+        </defs>
+
+        <polyline class="flow" points="160,200 205,200 205,110 250,110"></polyline>
+        <polyline class="flow" points="160,200 205,200 205,290 250,290"></polyline>
+        <line class="flow acc" x1="410" y1="110" x2="530" y2="110"></line>
+        <line class="flow" x1="410" y1="290" x2="530" y2="290"></line>
+        <polyline class="flow acc" points="690,110 750,110 750,200 820,200"></polyline>
+        <polyline class="flow" points="690,290 750,290 750,200 820,200"></polyline>
+        <line class="flow" x1="900" y1="230" x2="900" y2="380"></line>
+
+        <text class="lbl" x="470" y="100">pre-selects tab</text>
+        <text class="lbl" x="470" y="280">no builder</text>
+        <text class="lbl" x="718" y="100">full spec</text>
+        <text class="lbl" x="728" y="310">name + note</text>
+        <text class="lbl e" x="890" y="308">routes + notifies</text>
+
+        <g class="node">
+          <rect x="0" y="170" width="160" height="60" rx="3"></rect>
+          <text class="n-t" x="80" y="196">Collection page</text>
+          <text class="n-s" x="80" y="214">form module replaced</text>
+        </g>
+        <text class="lbl s" x="0" y="252">SEO content stays as-is</text>
+
+        <g class="node acc">
+          <rect x="250" y="80" width="160" height="60" rx="3"></rect>
+          <text class="n-t" x="330" y="106">Build my order</text>
+          <text class="n-s" x="330" y="124">primary CTA</text>
+        </g>
+
+        <g class="node">
+          <rect x="250" y="260" width="160" height="60" rx="3"></rect>
+          <text class="n-t" x="330" y="286">Not sure yet</text>
+          <text class="n-s" x="330" y="304">call · book · note</text>
+        </g>
+
+        <g class="node acc">
+          <rect x="530" y="80" width="160" height="60" rx="3"></rect>
+          <text class="n-t" x="610" y="106">The builder</text>
+          <text class="n-s" x="610" y="124">own URL · 5 screens</text>
+        </g>
+
+        <g class="node">
+          <rect x="530" y="260" width="160" height="60" rx="3"></rect>
+          <text class="n-t" x="610" y="286">Talk to us</text>
+          <text class="n-s" x="610" y="304">short form + calendar</text>
+        </g>
+
+        <g class="node">
+          <rect x="820" y="170" width="160" height="60" rx="3"></rect>
+          <text class="n-t" x="900" y="196">HubSpot</text>
+          <text class="n-s" x="900" y="214">one lead record</text>
+        </g>
+
+        <g class="node">
+          <rect x="820" y="380" width="160" height="60" rx="3"></rect>
+          <text class="n-t" x="900" y="406">Sales rep</text>
+          <text class="n-s" x="900" y="424">starts at step three</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>The green path is the one we're building. The grey path is roughly what exists today — kept deliberately, for the people it's actually right for.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="kicker">The builder</span>
+  <h2>Five screens, and two ways out</h2>
+  <p>The forward path is short on purpose. Every screen either shows the customer something useful or asks for something we genuinely need — nothing exists to collect data the sales team won't use.</p>
+  <p>The two branches matter as much as the chain. <strong>Add more products</strong> is the attach-rate mechanism: someone who came for hot cups discovering that sleeves and lids are one tab over. <strong>Talk to us instead</strong> is the safety net: anyone who stalls still converts, and we find out where they stalled.</p>
+
+  <figure>
+    <div class="scroller">
+      <svg id="fig2" class="dg" viewBox="0 0 1020 300" role="img" aria-label="Flow diagram of the builder: five screens in sequence — pick products, review list, project details, contact, confirmation. A loop returns from review to pick products to add more. A dashed escape path leads from the first two screens to a talk-to-us alternative.">
+        <defs>
+          <marker id="f2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="mk"></path>
+          </marker>
+          <marker id="f2b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="mk-acc"></path>
+          </marker>
+          <marker id="f2c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="mk-mut"></path>
+          </marker>
+        </defs>
+
+        <polyline class="flow" points="297,60 297,28 82,28 82,60"></polyline>
+        <text class="lbl" x="190" y="20">add more products</text>
+
+        <line class="flow acc" x1="152" y1="92" x2="227" y2="92"></line>
+        <line class="flow acc" x1="367" y1="92" x2="442" y2="92"></line>
+        <line class="flow acc" x1="582" y1="92" x2="657" y2="92"></line>
+        <line class="flow acc" x1="797" y1="92" x2="872" y2="92"></line>
+
+        <text class="lbl" x="189" y="82">adds items</text>
+        <text class="lbl" x="404" y="82">confirms</text>
+        <text class="lbl" x="619" y="82">5 questions</text>
+        <text class="lbl" x="834" y="82">4 fields</text>
+
+        <line class="flow dash" x1="82" y1="124" x2="82" y2="196"></line>
+        <line class="flow dash" x1="297" y1="124" x2="297" y2="196"></line>
+        <text class="lbl s" x="94" y="166">can't find what I need</text>
+
+        <g class="node acc">
+          <rect x="12" y="60" width="140" height="64" rx="3"></rect>
+          <text class="n-t" x="82" y="88">Pick products</text>
+          <text class="n-s" x="82" y="106">tabs + grid</text>
+        </g>
+
+        <g class="node acc">
+          <rect x="227" y="60" width="140" height="64" rx="3"></rect>
+          <text class="n-t" x="297" y="88">Review list</text>
+          <text class="n-s" x="297" y="106">edit + MOQ flags</text>
+        </g>
+
+        <g class="node acc">
+          <rect x="442" y="60" width="140" height="64" rx="3"></rect>
+          <text class="n-t" x="512" y="88">Project details</text>
+          <text class="n-s" x="512" y="106">the 5 questions</text>
+        </g>
+
+        <g class="node acc">
+          <rect x="657" y="60" width="140" height="64" rx="3"></rect>
+          <text class="n-t" x="727" y="88">Contact</text>
+          <text class="n-s" x="727" y="106">4 fields</text>
+        </g>
+
+        <g class="node acc">
+          <rect x="872" y="60" width="140" height="64" rx="3"></rect>
+          <text class="n-t" x="942" y="88">Confirmation</text>
+          <text class="n-s" x="942" y="106">what happens next</text>
+        </g>
+
+        <g class="node quiet">
+          <rect x="50" y="196" width="280" height="52" rx="3"></rect>
+          <text class="n-t" x="190" y="219">Talk to us instead</text>
+          <text class="n-s" x="190" y="236">same destination, different lead</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>The list persists in local storage across all five screens — closing the tab doesn't lose the work. Contact details are only requested at screen four, after the customer has already built something worth finishing.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="kicker">Screen by screen</span>
+  <h2>What happens on each one</h2>
+  <p>Read <em>Exits</em> as the important column. Most flow designs fail at the edges — the person who can't find their product, who wants less than the minimum, who closes the tab and comes back tomorrow.</p>
+
+  <div class="screens">
+
+    <article class="screen">
+      <div class="screen-head">
+        <span class="sid">ENTRY</span>
+        <h3>The two doors</h3>
+        <span class="screen-note">lives on the collection page</span>
+      </div>
+      <dl>
+        <dt>Sees</dt>
+        <dd>A module where the HubSpot form sits today. A short headline, then two clearly distinct paths — <b>Build your custom order</b> as the primary, <b>Not sure what you need? Talk to us</b> alongside it. The primary carries a plain promise: takes about two minutes, see minimums and lead times as you go.</dd>
+        <dt>We capture</dt>
+        <dd>Nothing yet. A click, tracked, so we can see the split between the two doors and tune the copy against real behaviour.</dd>
+        <dt>Exits</dt>
+        <dd>Into the builder, into the talk track, or further down the page to the existing SEO content and FAQ — all of which stays exactly where it is.</dd>
+      </dl>
+    </article>
+
+    <article class="screen">
+      <div class="screen-head">
+        <span class="sid">B1</span>
+        <h3>Pick products</h3>
+        <span class="screen-note">the screen that has to be good</span>
+      </div>
+      <dl>
+        <dt>Sees</dt>
+        <dd>Category tabs across the top, pre-selected based on where they came from but never locked. Below, a grid of product cards: real photography, name, the size range, the minimum order quantity, and the lead time. Opening a card reveals size rows with quantity steppers. A running summary stays visible the whole time — line items and total units.</dd>
+        <dt>We capture</dt>
+        <dd>Product, variant, and quantity for every line. Plus which tabs they opened, which is a quiet signal about interest they didn't act on.</dd>
+        <dt>Exits</dt>
+        <dd>Forward to review. Sideways to <b>talk to us</b> if the catalog doesn't have what they need. Or away entirely — in which case the list is waiting when they come back.</dd>
+      </dl>
+    </article>
+
+    <article class="screen">
+      <div class="screen-head">
+        <span class="sid">B2</span>
+        <h3>Review list</h3>
+      </div>
+      <dl>
+        <dt>Sees</dt>
+        <dd>Their selections as line items, grouped by category, with quantities editable in place. Anything below the minimum is flagged here rather than blocked earlier — with the minimum stated plainly and a route to talk it through.</dd>
+        <dt>We capture</dt>
+        <dd>The final line items, and any edits made at this stage — a quantity revised downward at review is worth knowing about.</dd>
+        <dt>Exits</dt>
+        <dd>Forward to project details, or back to <b>add more products</b>, which is where a single-category order becomes a multi-category one.</dd>
+      </dl>
+    </article>
+
+    <article class="screen">
+      <div class="screen-head">
+        <span class="sid">B3</span>
+        <h3>Project details</h3>
+        <span class="screen-note">the quote-enabling five</span>
+      </div>
+      <dl>
+        <dt>Sees</dt>
+        <dd>Five questions on one screen, no pagination: <b>when do you need them in hand</b>, <b>where's your artwork</b> (print-ready file / a logo somewhere / nothing yet), <b>how many colors in the print</b>, <b>what's it for</b> (café, event, franchise, reseller), and <b>one-time or recurring</b>.</dd>
+        <dt>We capture</dt>
+        <dd>All five. Only the date and artwork status are required — those two decide whether the order is even feasible. The rest improve the quote without gating it.</dd>
+        <dt>Exits</dt>
+        <dd>Forward to contact. Back to review with everything intact.</dd>
+      </dl>
+    </article>
+
+    <article class="screen">
+      <div class="screen-head">
+        <span class="sid">B4</span>
+        <h3>Contact</h3>
+      </div>
+      <dl>
+        <dt>Sees</dt>
+        <dd>Four fields: name, business name, email, phone. This is the only part of the experience that resembles the form we're replacing — four fields, at the end, after the customer has already invested effort worth protecting.</dd>
+        <dt>We capture</dt>
+        <dd>The contact record, joined to everything gathered on B1 through B3.</dd>
+        <dt>Exits</dt>
+        <dd>Submit. Or abandon here — which, with an email already typed, is the one abandonment worth recovering.</dd>
+      </dl>
+    </article>
+
+    <article class="screen">
+      <div class="screen-head">
+        <span class="sid">B5</span>
+        <h3>Confirmation</h3>
+      </div>
+      <dl>
+        <dt>Sees</dt>
+        <dd>What happens next, with a real timeframe rather than a vague thanks. Their full spec laid out so they can check it. A copy emailed to them. And a calendar link for anyone who'd rather talk now than wait for a rep to reach out.</dd>
+        <dt>We capture</dt>
+        <dd>Whether they booked time immediately — a strong buying signal worth routing on.</dd>
+        <dt>Exits</dt>
+        <dd>Back to the store, or into a booked call.</dd>
+      </dl>
+    </article>
+
+    <article class="screen alt">
+      <div class="screen-head">
+        <span class="sid">ALT</span>
+        <h3>Talk to us</h3>
+        <span class="screen-note">door two, and the escape hatch</span>
+      </div>
+      <dl>
+        <dt>Sees</dt>
+        <dd>A short form — name, email, phone, and an open box — beside the phone number and a booking calendar. Roughly what exists today, but aimed only at people it genuinely suits instead of everybody.</dd>
+        <dt>We capture</dt>
+        <dd>The contact and their note. Crucially, <b>where they came from</b>: the collection page, or a specific point in the builder. A rep picking up an escape-hatch lead knows what the customer was looking at when they gave up.</dd>
+        <dt>Exits</dt>
+        <dd>Into the same HubSpot record as everything else, tagged by route.</dd>
+      </dl>
+    </article>
+
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Open decisions</span>
+  <h2>Six things I need you to call</h2>
+  <p>These fork the design. Each one has a recommendation attached — tell me where you disagree and I'll rework the map before we touch wireframes.</p>
+
+  <div class="decisions">
+
+    <article class="decision">
+      <span class="dnum">DECISION 01</span>
+      <h3>Do we show pricing?</h3>
+      <p>Price ranges on the product cards build enormous trust and filter out unqualified leads before they reach a rep. They also commit you publicly to numbers that move with material costs, print complexity, and volume — and they hand competitors a price list.</p>
+      <div class="rec">
+        <span>Recommendation</span>
+        Show a per-unit starting point at the highest volume tier — "from $0.14/unit at 10,000" — rather than a full matrix. It anchors expectations and disqualifies the customer looking for 200 cups at wholesale, without publishing anything precise enough to shop against.
+      </div>
+    </article>
+
+    <article class="decision">
+      <span class="dnum">DECISION 02</span>
+      <h3>What happens below the minimum order quantity?</h3>
+      <p>Someone wants 250 custom hot cups and the minimum is 1,000. Three options: block them, let it through with a flag, or redirect them to stock product.</p>
+      <div class="rec">
+        <span>Recommendation</span>
+        Let it through, flagged at review with the minimum stated plainly, and offer the stock alternative right there. Blocking loses a lead who might have gone to 1,000 if a person had asked — and a rep can convert that conversation far better than a validation message can.
+      </div>
+    </article>
+
+    <article class="decision">
+      <span class="dnum">DECISION 03</span>
+      <h3>Email early or email late?</h3>
+      <p>Asking for an email up front means you can chase everyone who abandons. It also means a wall before the good part, and every abandoned-cart email you send is to someone who never saw what you offer.</p>
+      <div class="rec">
+        <span>Recommendation</span>
+        Late, at B4, with the list saved locally so returning customers pick up where they left off. You'll capture fewer emails and far more finished specs. If abandonment turns out to be the real problem, adding a save-my-progress prompt later is easy — removing a wall you've built the flow around is not.
+      </div>
+    </article>
+
+    <article class="decision">
+      <span class="dnum">DECISION 04</span>
+      <h3>Do we accept artwork uploads in the flow?</h3>
+      <p>It's tempting — the rep needs the file eventually. But an upload step mid-flow is a completion killer: files live on a designer's machine, not the phone someone is browsing on.</p>
+      <div class="rec">
+        <span>Recommendation</span>
+        Ask artwork <em>status</em> only, and take files later over email. Status is what determines the quote and the timeline; the file itself gets reviewed by a human before anything happens with it anyway.
+      </div>
+    </article>
+
+    <article class="decision">
+      <span class="dnum">DECISION 05</span>
+      <h3>Does the entry point lock the category?</h3>
+      <p>Someone arriving from the custom sleeve collection could see only sleeves, or see sleeves first with everything else available.</p>
+      <div class="rec">
+        <span>Recommendation</span>
+        Pre-select, never lock. This is the single biggest revenue argument for the whole project — today's siloed forms make it structurally impossible for a sleeve customer to tell you they also need cups.
+      </div>
+    </article>
+
+    <article class="decision">
+      <span class="dnum">DECISION 06</span>
+      <h3>How many categories are we actually navigating?</h3>
+      <p>Not a preference — a fact I need. Horizontal tabs work beautifully up to about six categories and fall apart past eight, at which point B1 needs a different navigation pattern entirely.</p>
+      <div class="rec">
+        <span>Recommendation</span>
+        Send me the list of custom product categories and roughly how many SKUs sit under each. If it's over eight, I'll redesign B1 around a sidebar or a filtered grid before we go near wireframes.
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Next</span>
+  <h2>What I need from you</h2>
+
+  <ul class="needs">
+    <li>
+      <span class="n">01</span>
+      <span class="d"><b>Calls on the six decisions</b>Even a quick yes-to-all works — I mainly need to know where your instinct differs from mine, because those are the places I've guessed wrong about your business.</span>
+    </li>
+    <li>
+      <span class="n">02</span>
+      <span class="d"><b>The custom product categories</b>Names and rough SKU counts. This shapes B1's navigation, which is the screen everything else hangs off.</span>
+    </li>
+    <li>
+      <span class="n">03</span>
+      <span class="d"><b>The test theme</b>Useful but not blocking. The design system tells me the rules; the live theme tells me how they've actually been applied — which is what the builder will need to sit next to without looking bolted on.</span>
+    </li>
+  </ul>
+
+  <div class="frame" style="margin-top:2.5rem">
+    <p><strong>Design system received.</strong> Working from Fraunces and DM Sans, ink <code>#161310</code>, and the four accent families — Brew yellow, Iced teal for cold products, Roasted orange, and signal red — along with the usage rules: never two brand colors in one section, never a primary background at full width, ink-solid button as primary. If I've misread any of that, stage 3 is where it would show up, so worth correcting now.</p>
+  </div>
+
+  <p style="margin-top:2.5rem">Once the decisions are settled, stage 2 is wireframes — grey-box layouts of all seven screens, structure only. That's where we find out whether B1 can really hold a category grid, a quantity picker, and a running summary at once without feeling crowded on a phone.</p>
+</section>
+
+<div class="closer">
+  Stage 1 of 4 · Flow map · Hot Cup Factory custom order experience<br>
+  Nothing in this document is connected to Shopify, HubSpot, or the theme. Product names, minimums, and prices are placeholders.
+</div>

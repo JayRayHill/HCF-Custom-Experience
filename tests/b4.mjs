@@ -1,0 +1,34 @@
+import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
+const url='file://'+new URL('../prototype/hcf-builder.html', import.meta.url).pathname;
+const b=await chromium.launch(); const ctx=await b.newContext({viewport:{width:1440,height:900},deviceScaleFactor:2});
+const p=await ctx.newPage(); const errs=[]; p.on('pageerror',e=>errs.push(e.message));
+await p.goto(url,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(600);
+await p.locator('.tile').nth(0).click(); await p.waitForTimeout(300);
+await p.locator('.sizes button').nth(1).click(); await p.waitForTimeout(120);
+await p.locator('.qtys button').nth(2).click(); await p.waitForTimeout(120);
+await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(300);
+await p.locator('#toB2').click(); await p.waitForTimeout(250);
+await p.locator('#toB3').click(); await p.waitForTimeout(250);
+await p.locator('#qBlock .qitem').first().locator('.chip').nth(1).click(); await p.waitForTimeout(250);
+await p.locator('#toB4').click(); await p.waitForTimeout(400);
+console.log(await p.evaluate(()=>{
+  const sec=document.querySelector('#s-b4').getBoundingClientRect();
+  const out=[];
+  const m=(sel,name)=>{const e=document.querySelector(sel);if(!e)return out.push(name+': MISSING');
+    const r=e.getBoundingClientRect();
+    out.push(`${name.padEnd(14)} left gap ${Math.round(r.left-sec.left)}  right gap ${Math.round(sec.right-r.right)}  ${Math.abs((r.left-sec.left)-(sec.right-r.right))<2?'CENTRED':'off-centre'}`);};
+  m('#s-b4 .screen-head','head'); m('#s-b4 .body-copy','body copy'); m('#s-b4 .whynoprice','why-no-price');
+  m('#s-b4 .form','form'); m('#s-b4 .screen-foot','foot'); m('#s-b4 .assure','assure');
+  out.push('head text-align: '+getComputedStyle(document.querySelector('#s-b4 .screen-head')).textAlign);
+  out.push('label text-align: '+getComputedStyle(document.querySelector('#s-b4 .frow label')).textAlign);
+  return out.join('\n');
+}));
+// error state still readable when centred
+await p.locator('#sendBtn').click(); await p.waitForTimeout(400);
+console.log('\nerror shown:', await p.evaluate(()=>{const e=document.querySelector('#e-name');return e.hidden?'(hidden)':e.textContent+' | align '+getComputedStyle(e).textAlign;}));
+console.log('gate:', await p.evaluate(()=>document.querySelector('#formGate').textContent));
+await p.locator('#s-b4').screenshot({path:'shots/v4-b4.png'});
+await p.setViewportSize({width:390,height:844}); await p.waitForTimeout(300);
+console.log('mobile overflow:', await p.evaluate(()=>document.documentElement.scrollWidth+'/'+document.documentElement.clientWidth));
+console.log('errors:',errs.length?errs:'none');
+await b.close();

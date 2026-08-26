@@ -1,0 +1,511 @@
+<title>Wiring Up the Quote Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   A schematic, not a brochure. Cool neutrals and a wire-teal for
+   system boundaries; HCF Roasted stays the accent so it reads as
+   the client's own document. Fraunces + DM Sans are the brand's
+   faces; JetBrains Mono carries every field name and data shape.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --paper:    #F6F7F9;
+  --card:     #FFFFFF;
+  --sunk:     #EDF0F3;
+  --ink:      #13171B;
+  --ink-soft: #495159;
+  --ink-mute: #78818A;
+  --rule:     #DCE1E6;
+  --accent:   #D2670F;
+  --accent-xl:#FCEEE2;
+  --wire:     #1B6B79;
+  --wire-xl:  #E4F0F2;
+  --shadow:   0 1px 3px rgba(19, 23, 27, .10);
+  --shadow-l: 0 6px 20px rgba(19, 23, 27, .10);
+
+  --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --body:    "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ease:    cubic-bezier(.38, .41, .27, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:    #0F1317;
+    --card:     #171C21;
+    --sunk:     #1E242A;
+    --ink:      #E9EDF1;
+    --ink-soft: #B3BCC4;
+    --ink-mute: #808A93;
+    --rule:     #2A3138;
+    --accent:   #FF9448;
+    --accent-xl:#2C1F14;
+    --wire:     #6FB9C6;
+    --wire-xl:  #14262A;
+    --shadow:   0 1px 3px rgba(0, 0, 0, .5);
+    --shadow-l: 0 6px 20px rgba(0, 0, 0, .45);
+  }
+}
+:root[data-theme="dark"] {
+  --paper:    #0F1317;
+  --card:     #171C21;
+  --sunk:     #1E242A;
+  --ink:      #E9EDF1;
+  --ink-soft: #B3BCC4;
+  --ink-mute: #808A93;
+  --rule:     #2A3138;
+  --accent:   #FF9448;
+  --accent-xl:#2C1F14;
+  --wire:     #6FB9C6;
+  --wire-xl:  #14262A;
+  --shadow:   0 1px 3px rgba(0, 0, 0, .5);
+  --shadow-l: 0 6px 20px rgba(0, 0, 0, .45);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 16.5px; line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+.wrap { max-width: 60rem; margin: 0 auto; padding: 0 clamp(20px, 5vw, 48px); }
+.col  { max-width: 40rem; }
+
+/* ── masthead ─────────────────────────────────────────────── */
+.mast { padding: clamp(44px, 8vw, 88px) 0 0; }
+.kicker {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--wire);
+  margin: 0 0 18px;
+}
+h1 {
+  font-family: var(--display); font-weight: 900; font-size: clamp(38px, 6.6vw, 68px);
+  line-height: 1.0; letter-spacing: -.02em; margin: 0; text-wrap: balance;
+}
+h1 em { font-style: italic; font-weight: 700; color: var(--accent); }
+.dek {
+  font-size: clamp(17px, 2.1vw, 20px); line-height: 1.55; color: var(--ink-soft);
+  margin: 22px 0 0; max-width: 36rem; text-wrap: pretty;
+}
+.facts {
+  display: flex; flex-wrap: wrap; gap: 0 32px; margin: 36px 0 0;
+  padding: 20px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 12px; color: var(--ink-mute);
+}
+.facts b {
+  display: block; font-family: var(--display); font-weight: 700; font-size: 23px;
+  color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.2;
+}
+.facts > div { padding: 3px 0; }
+
+/* ── sections ─────────────────────────────────────────────── */
+section { padding: clamp(44px, 6.5vw, 76px) 0 0; }
+.eyebrow {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .17em;
+  text-transform: uppercase; color: var(--wire); margin: 0 0 10px;
+}
+h2 {
+  font-family: var(--display); font-weight: 700; font-size: clamp(26px, 3.6vw, 36px);
+  line-height: 1.1; letter-spacing: -.014em; margin: 0 0 18px; text-wrap: balance;
+}
+h3 {
+  font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.25;
+  margin: 32px 0 8px; text-wrap: balance;
+}
+h3:first-child { margin-top: 0; }
+p { margin: 0 0 16px; text-wrap: pretty; }
+a { color: var(--accent); text-underline-offset: 3px; }
+code {
+  font-family: var(--mono); font-size: .86em; background: var(--sunk);
+  padding: 1.5px 5px; border-radius: 3px; color: var(--ink);
+}
+strong { font-weight: 700; }
+
+/* ── the system chip: which system owns this ──────────────── */
+.sys {
+  display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px;
+  vertical-align: 2px; margin-right: 8px; white-space: nowrap;
+}
+.sys--shop { background: var(--wire-xl); color: var(--wire); }
+.sys--browser { background: var(--accent-xl); color: var(--accent); }
+.sys--hub { background: var(--sunk); color: var(--ink-soft); }
+
+/* ── screens strip ────────────────────────────────────────── */
+.screens { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.screens li {
+  display: grid; grid-template-columns: 2.4rem 1fr; gap: 16px; align-items: start;
+  padding: 15px 0; border-bottom: 1px solid var(--rule);
+}
+.screens .n {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--wire);
+  background: var(--wire-xl); border-radius: 3px; text-align: center; padding: 4px 0;
+}
+.screens b { display: block; font-family: var(--display); font-size: 17px; }
+.screens span { font-size: 15px; color: var(--ink-soft); }
+
+/* ── code block ───────────────────────────────────────────── */
+pre {
+  background: var(--card); border: 1px solid var(--rule); border-radius: 8px;
+  padding: 18px 20px; overflow-x: auto; margin: 0 0 18px;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: var(--ink);
+  box-shadow: var(--shadow);
+}
+pre .c { color: var(--ink-mute); }
+pre .k { color: var(--accent); font-weight: 700; }
+figure { margin: 0 0 22px; }
+figcaption {
+  font-size: 13.5px; line-height: 1.5; color: var(--ink-mute);
+  margin-top: 12px; max-width: 42rem;
+}
+.diagram {
+  background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+  padding: clamp(16px, 3vw, 28px); box-shadow: var(--shadow); overflow-x: auto;
+}
+.diagram svg { display: block; width: 100%; max-width: 100%; height: auto; min-width: 620px; }
+
+/* ── tables ───────────────────────────────────────────────── */
+.tablewrap { overflow-x: auto; margin: 0 0 18px; }
+table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: 14.5px; }
+th, td { text-align: left; padding: 11px 14px 11px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-mute); border-bottom-color: var(--ink-mute);
+}
+td code { white-space: nowrap; }
+td:last-child, th:last-child { padding-right: 0; }
+
+/* ── build steps ──────────────────────────────────────────── */
+.steps { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: s; }
+.steps > li {
+  background: var(--card); border-radius: 4px 10px 10px 4px; box-shadow: var(--shadow);
+  border-left: 3px solid var(--wire); padding: 20px 24px;
+  transition: box-shadow .22s var(--ease), transform .22s var(--ease);
+}
+.steps > li:hover { box-shadow: var(--shadow-l); transform: translate3d(0, -2px, 0); }
+.steps > li.blocked { border-left-color: var(--accent); }
+.steps h3 { margin: 0 0 6px; font-size: 18px; }
+.steps p { margin: 0 0 10px; font-size: 15px; color: var(--ink-soft); }
+.steps p:last-child { margin-bottom: 0; }
+.dep {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-mute);
+  display: block; margin-top: 10px;
+}
+.dep b { color: var(--accent); font-weight: 700; }
+
+/* ── callout ──────────────────────────────────────────────── */
+.note {
+  background: var(--wire-xl); border-left: 3px solid var(--wire);
+  border-radius: 0 8px 8px 0; padding: 20px 24px; margin: 0 0 20px;
+}
+.note p:last-child { margin-bottom: 0; }
+.note .eyebrow { color: var(--wire); }
+.note--warn { background: var(--accent-xl); border-left-color: var(--accent); }
+.note--warn .eyebrow { color: var(--accent); }
+
+/* ── open questions ───────────────────────────────────────── */
+.opens { display: grid; gap: 0; }
+.opens > div { padding: 18px 0; border-bottom: 1px solid var(--rule); }
+.opens h3 { margin: 0 0 6px; font-size: 17.5px; }
+.opens p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+
+footer {
+  margin-top: clamp(48px, 7vw, 84px); padding: 26px 0 56px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 11.5px; color: var(--ink-mute);
+}
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <p class="kicker">HCF · Custom quote builder · Integration spec</p>
+    <h1>Wiring up the <em>quote builder</em></h1>
+    <p class="dek">What the prototype does, which parts survive the move to Shopify, and the order to build it in. Written so someone who has not seen this project can pick it up.</p>
+    <div class="facts">
+      <div>prototype<b>2,682 lines</b></div>
+      <div>of which photos<b>160 KB</b></div>
+      <div>screens<b>5</b></div>
+      <div>products<b>6</b></div>
+      <div>systems to join<b>3</b></div>
+    </div>
+  </header>
+
+  <section class="col">
+    <p class="eyebrow">What it is</p>
+    <h2>A spec builder, not a form</h2>
+    <p>Today every custom-product collection page links to one HubSpot form whose main field is <code>custom_quote_message</code> — free text, described in your portal as <em>"a customer to give description of what they are looking to purchase."</em> A rep reads prose and phones back to ask what was meant.</p>
+    <p>The builder replaces that with five screens that produce a structured request. The customer picks products, sizes and quantities; the rep receives a spec they can price without a discovery call.</p>
+
+    <ol class="screens">
+      <li><span class="n">01</span><span><b>Build</b><span>Category pills, product cards, and a configurator for size and quantity. A running list on the right collects what they pick.</span></span></li>
+      <li><span class="n">02</span><span><b>Review</b><span>Every line grouped by category, quantities adjustable a case at a time, anything removable with an undo.</span></span></li>
+      <li><span class="n">03</span><span><b>Details</b><span>Four chip questions — deadline, artwork, use, one-off or repeat — plus a free-text box for anything the catalogue can't express.</span></span></li>
+      <li><span class="n">04</span><span><b>Contact</b><span>Name, business, email, phone. Deliberately last: the work is already done and saved, so the ask is earned.</span></span></li>
+      <li><span class="n">05</span><span><b>Confirmation</b><span>What was sent, the address it went to, a reference number, and the four steps that follow.</span></span></li>
+    </ol>
+
+    <h3>Two rules that shape everything</h3>
+    <p><strong>Quantities on a line are alternatives, never a sum.</strong> Picking 5,000 <em>and</em> 10,000 means "price both", not "I want 15,000". This is why there is no grand total anywhere — adding cups to sleeves to jars produced a number nobody could use, sitting exactly where a checkout puts the money.</p>
+    <p><strong>Nothing is a purchase.</strong> No cart language, no prices, no payment. The vocabulary is "quote request" throughout, and the reassurance is repeated on every screen that asks for something.</p>
+  </section>
+
+  <section>
+    <div class="col">
+      <p class="eyebrow">The mechanism</p>
+      <h2>Three systems, two boundaries</h2>
+      <p>The whole integration is a question of what crosses each boundary and when. Everything between the two crossings is the prototype you already have.</p>
+    </div>
+
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 900 330" role="img" aria-label="Shopify renders the catalogue into the page; the browser holds the whole session in localStorage until send; on send the spec crosses once to HubSpot, which emails the quote back to the customer.">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+            </marker>
+            <marker id="ar-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#D2670F"/>
+            </marker>
+          </defs>
+
+          <!-- zone grounds -->
+          <rect x="0" y="34" width="252" height="252" rx="8" fill="currentColor" opacity="0.04"/>
+          <rect x="324" y="34" width="252" height="252" rx="8" fill="#D2670F" opacity="0.07"/>
+          <rect x="648" y="34" width="252" height="252" rx="8" fill="currentColor" opacity="0.04"/>
+
+          <!-- zone titles -->
+          <text x="126" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" letter-spacing="1.6" fill="currentColor">SHOPIFY</text>
+          <text x="450" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" letter-spacing="1.6" fill="#D2670F">CUSTOMER'S BROWSER</text>
+          <text x="774" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" letter-spacing="1.6" fill="currentColor">HUBSPOT</text>
+
+          <!-- shopify boxes -->
+          <rect x="28" y="62" width="196" height="58" rx="6" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="126" y="86" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="13" font-weight="700" fill="currentColor">Collection page</text>
+          <text x="126" y="105" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11.5" fill="currentColor" opacity="0.66">CTA replaces the form</text>
+
+          <rect x="28" y="146" width="196" height="58" rx="6" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="126" y="170" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="13" font-weight="700" fill="currentColor">Product metafields</text>
+          <text x="126" y="189" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.66">moq · case · lead · sizes</text>
+
+          <rect x="28" y="230" width="196" height="42" rx="6" fill="none" stroke="currentColor" stroke-width="1.25" stroke-dasharray="4 3"/>
+          <text x="126" y="256" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12.5" fill="currentColor" opacity="0.75">Quote builder page</text>
+
+          <!-- browser box -->
+          <rect x="352" y="62" width="196" height="142" rx="6" fill="none" stroke="#D2670F" stroke-width="1.5"/>
+          <text x="450" y="88" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="13" font-weight="700" fill="#D2670F">Builder, 5 screens</text>
+          <circle cx="390" cy="112" r="7" fill="#D2670F"/><circle cx="420" cy="112" r="7" fill="#D2670F" opacity="0.75"/><circle cx="450" cy="112" r="7" fill="#D2670F" opacity="0.55"/><circle cx="480" cy="112" r="7" fill="#D2670F" opacity="0.4"/><circle cx="510" cy="112" r="7" fill="#D2670F" opacity="0.28"/>
+          <text x="450" y="146" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11.5" fill="currentColor" opacity="0.75">no server round-trip</text>
+          <text x="450" y="164" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11.5" fill="currentColor" opacity="0.75">between screens</text>
+          <text x="450" y="188" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.6">hcf-quote-builder-session-v1</text>
+
+          <rect x="352" y="230" width="196" height="42" rx="6" fill="none" stroke="#D2670F" stroke-width="1.25" stroke-dasharray="4 3"/>
+          <text x="450" y="256" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12.5" fill="currentColor" opacity="0.75">localStorage · survives reload</text>
+
+          <!-- hubspot boxes -->
+          <rect x="676" y="62" width="196" height="58" rx="6" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="774" y="86" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="13" font-weight="700" fill="currentColor">Contact</text>
+          <text x="774" y="105" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11.5" fill="currentColor" opacity="0.66">person-level facts</text>
+
+          <rect x="676" y="146" width="196" height="58" rx="6" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <text x="774" y="170" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="13" font-weight="700" fill="currentColor">Deal</text>
+          <text x="774" y="189" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11.5" fill="currentColor" opacity="0.66">one per request + raw JSON</text>
+
+          <rect x="676" y="230" width="196" height="42" rx="6" fill="none" stroke="currentColor" stroke-width="1.25" stroke-dasharray="4 3"/>
+          <text x="774" y="256" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12.5" fill="currentColor" opacity="0.75">rep prices it, emails back</text>
+
+          <!-- boundary 1 -->
+          <g color="currentColor">
+            <line x1="228" y1="120" x2="346" y2="120" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+          </g>
+          <text x="287" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.8">renders</text>
+          <text x="287" y="136" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.8">catalogue</text>
+
+          <!-- boundary 2 -->
+          <g color="#D2670F">
+            <line x1="552" y1="120" x2="670" y2="120" stroke="#D2670F" stroke-width="2" marker-end="url(#ar-a)"/>
+          </g>
+          <text x="611" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#D2670F">POST once,</text>
+          <text x="611" y="136" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#D2670F">on send</text>
+
+          <!-- return path -->
+          <path d="M 774 286 L 774 308 L 450 308" fill="none" stroke="currentColor" stroke-width="1.25" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+          <text x="612" y="323" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.75">quote by email, within one business day</text>
+        </svg>
+      </div>
+      <figcaption><strong>The spec crosses to HubSpot exactly once.</strong> Everything before that — five screens, edits, back-and-forth, a reload, a closed tab — happens in the browser against a catalogue Shopify printed into the page. That single crossing is the only new server-side work the project needs.</figcaption>
+    </figure>
+  </section>
+
+  <section class="col">
+    <p class="eyebrow">Data shapes</p>
+    <h2>Three objects hold everything</h2>
+    <p>These are the real shapes in the prototype. Getting them right in Shopify is most of the migration.</p>
+
+    <h3><span class="sys sys--shop">Shopify</span>A product</h3>
+    <p>Six of these drive the whole catalogue: the cards, the configurator, the review maths and the deadline check.</p>
+<pre>{ id: <span class="k">"sw"</span>, group: <span class="k">"Coffee Cups"</span>, name: <span class="k">"Single Wall Paper Cup"</span>,
+  unit: <span class="k">"cups"</span>, blurb: <span class="k">"Standard hot cup. Needs a sleeve for hot drinks."</span>,
+  moq: <span class="k">5000</span>, per: <span class="k">1000</span>, lead: <span class="k">"3–4 weeks"</span>, leadMax: <span class="k">4</span>,
+  note: <span class="k">"Standard 90mm rim, the common size…"</span>,
+  lid: <span class="k">"Also quote matching 90mm lids"</span>,
+  sizes: [[<span class="k">"8 oz"</span>], [<span class="k">"12 oz"</span>], [<span class="k">"16 oz"</span>], [<span class="k">"20 oz"</span>]],
+  tiers: [<span class="k">5000</span>, <span class="k">10000</span>, <span class="k">25000</span>, <span class="k">50000</span>] }</pre>
+    <p><code>per</code> is the case size, so quantities only move a whole case at a time. <code>leadMax</code> is the numeric weeks used to warn when a deadline is too tight — with jars at 4–6 weeks, answering "2–3 weeks" fires a clash notice naming the slowest product on the request.</p>
+
+    <h3><span class="sys sys--browser">Browser</span>A quote line</h3>
+    <p>One per product-and-size the customer adds. <code>qtys</code> is an array because a line can carry alternatives.</p>
+<pre>{ pid: <span class="k">"sw"</span>, name: <span class="k">"Single Wall Paper Cup"</span>, size: <span class="k">"12 oz"</span>,
+  qtys: [<span class="k">5000</span>, <span class="k">10000</span>],   <span class="c">// "price both", not 15,000</span>
+  per: <span class="k">1000</span>, cold: <span class="k">0</span>, unsure: <span class="k">false</span> }</pre>
+    <p><code>unsure: true</code> is the "Not sure yet" path — it stages the line at the minimum and flags it for the rep as <em>help me size this</em>, so an unknown quantity stops being a dead end.</p>
+
+    <h3><span class="sys sys--browser">Browser</span>The session</h3>
+    <p>Written to <code>localStorage</code> on every change and restored on load. This is what makes asking for an email at screen four defensible rather than reckless: the work is not hostage to the contact details.</p>
+<pre>{ quote: [ …lines… ],
+  answers: { when, artwork, use, cadence },
+  note: <span class="k">"Also need napkins and a 10oz if you make one."</span>,
+  lids: [<span class="k">"sw"</span>, <span class="k">"clear"</span>],
+  tab, open, screen }</pre>
+    <div class="note">
+      <p class="eyebrow">One behaviour worth preserving</p>
+      <p>Sending is terminal. On submit the session is cleared <em>and</em> a flag stops anything re-saving it, so walking Back off the confirmation cannot resurrect a request that was already sent, and the form cannot fire twice. Four separate reviewers found the version without this.</p>
+    </div>
+  </section>
+
+  <section class="col">
+    <p class="eyebrow">Connecting it</p>
+    <h2>Four joins</h2>
+
+    <h3>1 · The entry point <span class="sys sys--shop" style="margin-left:6px">Shopify</span></h3>
+    <p>A small section on each custom collection page, in the slot the HubSpot form occupies now. It should name what they get rather than what they do, and state the minimum <em>before</em> the click so a shop that can't do 5,000 finds out here instead of after four screens.</p>
+    <p>Link it as <code>/pages/custom-quote?category=coffee-cups</code>. The builder opens on that category with all five pills still live — pre-selecting, not locking.</p>
+
+    <h3>2 · The page <span class="sys sys--shop" style="margin-left:6px">Shopify</span></h3>
+    <p>A page template with the builder as one Canopy section. Not a modal: the five screens already have real URLs, working browser back/forward and restorable state, and a modal loses all three while adding scroll-lock problems on the device most of these customers are using.</p>
+
+    <h3>3 · The catalogue <span class="sys sys--shop" style="margin-left:6px">Shopify</span></h3>
+    <p>The six-product array becomes product metafields, printed into the page by Liquid as JSON on load. No fetch, no loading state — the builder reads the same shape it reads today.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Metafield</th><th>Type</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>custom.moq</code></td><td>integer</td><td>5000</td></tr>
+          <tr><td><code>custom.case_size</code></td><td>integer</td><td>1000</td></tr>
+          <tr><td><code>custom.lead_time</code></td><td>single line text</td><td>3–4 weeks</td></tr>
+          <tr><td><code>custom.lead_max_weeks</code></td><td>integer</td><td>4</td></tr>
+          <tr><td><code>custom.unit_noun</code></td><td>single line text</td><td>cups</td></tr>
+          <tr><td><code>custom.blurb</code></td><td>single line text</td><td>Standard hot cup. Needs a sleeve…</td></tr>
+          <tr><td><code>custom.spec_note</code></td><td>multi line text</td><td>Standard 90mm rim…</td></tr>
+          <tr><td><code>custom.lid_offer</code></td><td>single line text</td><td>Also quote matching 90mm lids</td></tr>
+          <tr><td><code>custom.qty_tiers</code></td><td>list.integer</td><td>5000, 10000, 25000, 50000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Sizes come from the product's own variants, and the photograph from its featured image — which also removes the 160 KB of base64 currently inlined in the prototype.</p>
+
+    <h3>4 · The submit <span class="sys sys--hub" style="margin-left:6px">HubSpot</span></h3>
+    <p>The one crossing. Three layers, because a request is multi-line and contact properties are flat:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Object</th><th>Carries</th><th>Why there</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Contact</strong></td><td>name, email, phone, company, plus the four chip answers</td><td>Person-level facts that should persist across requests and feed segmentation</td></tr>
+          <tr><td><strong>Deal</strong></td><td>reference number, readable summary, needed-by, and the raw JSON in a hidden property</td><td>What the rep actually works — gives it a pipeline, an owner and reporting</td></tr>
+          <tr><td><strong>Line items</strong><br><span style="color:var(--ink-mute);font-size:13px">optional, later</span></td><td>one per product and quantity</td><td>Only if you want "how many people asked for 16 oz double wall" as a report</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Keep the raw JSON regardless. It costs one property, and it means changing how the request is displayed later doesn't lose data you already captured.</p>
+    <div class="note note--warn">
+      <p class="eyebrow">The part that needs a decision</p>
+      <p>A HubSpot <strong>Forms API</strong> submission can create or update a Contact but <strong>cannot create a Deal</strong>. Getting a Deal means either a Workflow (Professional and above) or a small server-side call — a Shopify app proxy route, or a function that holds the private-app token. That token must never reach the browser, which is the one genuine piece of backend work in this project.</p>
+    </div>
+  </section>
+
+  <section class="col">
+    <p class="eyebrow">Estimating</p>
+    <h2>What moves, what gets rewritten</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Part</th><th>Fate</th></tr></thead>
+        <tbody>
+          <tr><td>Screen flow, history, session persistence</td><td>Moves unchanged</td></tr>
+          <tr><td>Configurator, review, questions, confirmation logic</td><td>Moves unchanged</td></tr>
+          <tr><td>Copy, and every decision behind it</td><td>Moves unchanged</td></tr>
+          <tr><td>Product array</td><td>Rewritten as metafield reads</td></tr>
+          <tr><td>Inlined base64 photography</td><td>Deleted — Shopify serves the images</td></tr>
+          <tr><td>All CSS spacing values</td><td>Rewritten against the theme's <code>--space-unit</code></td></tr>
+          <tr><td>Markup</td><td>Rewritten as Liquid with Canopy's own classes</td></tr>
+          <tr><td>Submit handler</td><td>New — currently the only simulated part</td></tr>
+          <tr><td>Photo tool, <code>alert()</code> stubs</td><td>Deleted</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The behaviour is the expensive part and it is done. What remains is plumbing plus one endpoint.</p>
+  </section>
+
+  <section class="col">
+    <p class="eyebrow">Order of work</p>
+    <h2>Build it in this order</h2>
+    <ol class="steps">
+      <li class="blocked">
+        <h3>Catalogue into metafields</h3>
+        <p>Define the metafield set, populate all six products, confirm the two case sizes that are still assumptions — cups at 1,000 and sleeves at 2,500.</p>
+        <span class="dep"><b>Blocks everything else.</b> Nothing can be built against a catalogue that doesn't exist yet.</span>
+      </li>
+      <li>
+        <h3>The Canopy section and page</h3>
+        <p>Scaffold the section, port the markup to Liquid with the theme's classes, and print the catalogue JSON from the metafields. Spacing resolves itself here by inheriting the theme.</p>
+        <span class="dep">needs 1</span>
+      </li>
+      <li>
+        <h3>The collection-page CTA</h3>
+        <p>A second, much smaller section replacing the HubSpot form module, linking through with the category parameter.</p>
+        <span class="dep">needs 2</span>
+      </li>
+      <li>
+        <h3>The submit endpoint</h3>
+        <p>Contact upsert plus Deal creation, with the raw JSON stored. Build it behind an app proxy so the token stays server-side. Until it exists the builder can post to a plain HubSpot form so the flow is testable end to end.</p>
+        <span class="dep">independent of 2 and 3 — can run in parallel</span>
+      </li>
+      <li>
+        <h3>Test on real devices</h3>
+        <p>Every measurement in this project was taken in headless Chromium. The mobile experience in particular deserves a real phone before customers see it.</p>
+        <span class="dep">needs 2, 3, 4</span>
+      </li>
+    </ol>
+  </section>
+
+  <section class="col">
+    <p class="eyebrow">Unresolved</p>
+    <h2>Open questions</h2>
+    <div class="opens">
+      <div>
+        <h3>Can you use a custom object?</h3>
+        <p>Your portal has none defined today, and the account API reports <code>accountType: STANDARD</code> — which means a normal production portal, not a subscription tier, so it does not answer the question. A "Custom Quote Request" object would be cleaner than overloading Deals. Check Settings → Objects before committing to the Deal shape.</p>
+      </div>
+      <div>
+        <h3>Are the two case sizes right?</h3>
+        <p>Cups at 1,000 per case and sleeves at 2,500 are inferences, not given facts. Only the jar (147) came from you. These print on the review screen as "5 cases of 1,000", so an error is customer-visible.</p>
+      </div>
+      <div>
+        <h3>Does a Shopify draft order get created too?</h3>
+        <p>Or is HubSpot the only system of record until the deal closes? This changes whether the submit endpoint talks to one API or two.</p>
+      </div>
+      <div>
+        <h3>What are the theme's real spacing values?</h3>
+        <p>The container gutter is settled at 20px from the <code>sizes</code> calc in your Liquid. Vertical rhythm, <code>--space-unit</code> and grid gaps are still the prototype's own choices and should inherit from the theme instead.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Hot Cup Factory · custom quote builder · integration spec · prototype at 2,682 lines, 33 automated checks passing, verified 360–1440px
+  </footer>
+</div>

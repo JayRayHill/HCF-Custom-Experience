@@ -1,0 +1,778 @@
+<title>Behind the Counter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   A press proof, not a report template. Proofing-pencil red does
+   the annotating; kraft does the ruling; HCF's own Fraunces and
+   DM Sans keep it recognisably the client's own document.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --paper:    #FBF9F5;
+  --card:     #FFFFFF;
+  --ink:      #17140F;
+  --ink-soft: #4A443C;
+  --ink-mute: #7C7469;
+  --kraft:    #A8895F;
+  --kraft-xl: #EDE4D6;
+  --rule:     #E2DACC;
+  --proof:    #C0342A;
+  --proof-xl: #F7E6E3;
+  --press:    #1E5560;
+  --press-xl: #E2EFF1;
+  --shadow:   0 1px 3px rgba(23, 20, 15, .10);
+  --shadow-l: 0 6px 20px rgba(23, 20, 15, .09);
+
+  --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --body:    "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:    "Courier Prime", "Courier New", monospace;
+  --ease:    cubic-bezier(.38, .41, .27, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:    #14120F;
+    --card:     #1E1B17;
+    --ink:      #F4EFE7;
+    --ink-soft: #C4BCAF;
+    --ink-mute: #8E8577;
+    --kraft:    #C4A67C;
+    --kraft-xl: #2C271F;
+    --rule:     #332E26;
+    --proof:    #E8776B;
+    --proof-xl: #33201E;
+    --press:    #74B6C2;
+    --press-xl: #16292D;
+    --shadow:   0 1px 3px rgba(0, 0, 0, .5);
+    --shadow-l: 0 6px 20px rgba(0, 0, 0, .45);
+  }
+}
+:root[data-theme="dark"] {
+  --paper:    #14120F;
+  --card:     #1E1B17;
+  --ink:      #F4EFE7;
+  --ink-soft: #C4BCAF;
+  --ink-mute: #8E8577;
+  --kraft:    #C4A67C;
+  --kraft-xl: #2C271F;
+  --rule:     #332E26;
+  --proof:    #E8776B;
+  --proof-xl: #33201E;
+  --press:    #74B6C2;
+  --press-xl: #16292D;
+  --shadow:   0 1px 3px rgba(0, 0, 0, .5);
+  --shadow-l: 0 6px 20px rgba(0, 0, 0, .45);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 16.5px; line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--proof); outline-offset: 3px; border-radius: 2px; }
+
+.wrap { max-width: 78rem; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
+.col  { max-width: 40rem; }
+
+/* ── masthead ─────────────────────────────────────────────── */
+.mast { padding: clamp(48px, 9vw, 104px) 0 0; position: relative; }
+.regmark {
+  position: absolute; top: clamp(26px, 5vw, 46px); right: clamp(20px, 5vw, 56px);
+  width: 42px; height: 42px; opacity: .5;
+}
+.stamp {
+  display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700;
+  letter-spacing: .17em; text-transform: uppercase; color: var(--proof);
+  border: 1.5px solid var(--proof); border-radius: 3px; padding: 5px 10px;
+  transform: rotate(-1.6deg); margin-bottom: 26px;
+}
+h1 {
+  font-family: var(--display); font-weight: 900; font-size: clamp(44px, 8.4vw, 92px);
+  line-height: .95; letter-spacing: -.022em; margin: 0; text-wrap: balance;
+}
+h1 em { font-style: italic; font-weight: 700; color: var(--proof); }
+.dek {
+  font-size: clamp(18px, 2.3vw, 21px); line-height: 1.5; color: var(--ink-soft);
+  margin: 26px 0 0; max-width: 34rem; text-wrap: pretty;
+}
+
+.meta {
+  display: flex; flex-wrap: wrap; gap: 0 34px; margin: 40px 0 0;
+  padding: 22px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 12.5px; color: var(--ink-mute);
+}
+.meta b {
+  display: block; font-family: var(--display); font-weight: 700; font-size: 25px;
+  color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.15;
+}
+.meta > div { padding: 4px 0; }
+
+/* ── generic section furniture ────────────────────────────── */
+section { padding: clamp(46px, 7vw, 84px) 0 0; }
+.eyebrow {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 700; letter-spacing: .19em;
+  text-transform: uppercase; color: var(--kraft); margin: 0 0 12px;
+}
+h2 {
+  font-family: var(--display); font-weight: 700; font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.08; letter-spacing: -.015em; margin: 0 0 20px; text-wrap: balance;
+}
+h3 {
+  font-family: var(--display); font-weight: 700; font-size: 21px; line-height: 1.25;
+  margin: 0 0 10px; text-wrap: balance;
+}
+p { margin: 0 0 17px; text-wrap: pretty; }
+a { color: var(--proof); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+/* ── the fixed-already callout ────────────────────────────── */
+.fixed {
+  background: var(--press-xl); border-left: 3px solid var(--press);
+  border-radius: 0 8px 8px 0; padding: 24px 28px; margin: 0; max-width: 44rem;
+}
+section.tight { padding-top: clamp(30px, 4vw, 46px); }
+.fixed .eyebrow { color: var(--press); }
+.fixed p:last-child { margin-bottom: 0; }
+.fixed code, .body code {
+  font-family: var(--mono); font-size: .88em; background: var(--kraft-xl);
+  padding: 1px 5px; border-radius: 3px;
+}
+
+/* ── walkthrough ──────────────────────────────────────────── */
+.walk p { font-size: 17.5px; line-height: 1.72; }
+.walk p.lede::first-letter {
+  font-family: var(--display); font-weight: 900; font-size: 3.5em; float: left;
+  line-height: .82; padding: 4px 10px 0 0; color: var(--proof);
+}
+.walk .beat {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--proof); margin: 34px 0 10px;
+  display: flex; align-items: center; gap: 12px;
+}
+.walk .beat::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+.walk q { font-style: italic; color: var(--ink-soft); }
+
+/* ── working list ─────────────────────────────────────────── */
+.works { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; max-width: 46rem; }
+.works li {
+  display: grid; grid-template-columns: 26px 1fr; gap: 14px; align-items: start;
+  padding: 15px 0; border-bottom: 1px solid var(--rule);
+}
+.works li::before {
+  content: "✓"; font-family: var(--mono); font-weight: 700; color: var(--press);
+  font-size: 15px; line-height: 1.6;
+}
+.works b { font-weight: 700; }
+
+/* ── batch nav ────────────────────────────────────────────── */
+.batchnav {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 0;
+}
+.batchnav a {
+  font-family: var(--mono); font-size: 12.5px; text-decoration: none; color: var(--ink-soft);
+  border: 1px solid var(--rule); border-radius: 999px; padding: 7px 14px; background: var(--card);
+  transition: border-color .2s var(--ease), color .2s var(--ease);
+}
+.batchnav a:hover { border-color: var(--ink); color: var(--ink); }
+.batchnav a b { font-family: var(--display); color: var(--proof); margin-right: 7px; }
+
+/* ── batches ──────────────────────────────────────────────── */
+/* Findings are read, not scanned — hold them to a reading measure rather than
+   letting the card stretch to the full page width. */
+.batch { padding-top: clamp(46px, 6vw, 72px); scroll-margin-top: 24px; max-width: 54rem; }
+.batchnav { max-width: 54rem; }
+.batch__head {
+  display: grid; grid-template-columns: auto 1fr; gap: 0 22px; align-items: baseline;
+  border-top: 2px solid var(--ink); padding-top: 18px; margin-bottom: 26px;
+}
+.batch__letter {
+  font-family: var(--display); font-weight: 900; font-size: clamp(40px, 6vw, 58px);
+  line-height: .85; color: var(--proof); letter-spacing: -.03em;
+}
+.batch__title {
+  font-family: var(--display); font-weight: 700; font-size: clamp(23px, 3vw, 31px);
+  line-height: 1.12; margin: 0; letter-spacing: -.012em; text-wrap: balance;
+}
+.batch__why {
+  grid-column: 2; font-size: 15.5px; color: var(--ink-soft); margin: 9px 0 0; max-width: 40rem;
+}
+
+/* ── findings ─────────────────────────────────────────────── */
+.finds { display: grid; gap: 14px; }
+.find {
+  background: var(--card); border-radius: 4px 10px 10px 4px; box-shadow: var(--shadow);
+  border-left: 4px solid var(--sev, var(--kraft));
+  padding: 22px clamp(20px, 3vw, 30px);
+  transition: box-shadow .22s var(--ease), transform .22s var(--ease);
+}
+.find:hover { box-shadow: var(--shadow-l); transform: translate3d(0, -2px, 0); }
+.find[data-sev="critical"] { --sev: var(--proof); }
+.find[data-sev="high"]     { --sev: var(--proof); }
+.find[data-sev="medium"]   { --sev: var(--kraft); }
+.find[data-sev="low"]      { --sev: var(--rule); }
+
+.slug {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  margin-bottom: 11px;
+}
+.slug .id { font-weight: 700; color: var(--ink); }
+.slug .sep { color: var(--rule); }
+.slug .where { color: var(--ink-mute); letter-spacing: .06em; text-transform: none; font-size: 11.5px; }
+.sev {
+  font-weight: 700; border-radius: 3px; padding: 3px 7px; letter-spacing: .12em;
+}
+[data-sev="critical"] .sev { background: var(--proof); color: var(--card); }
+[data-sev="high"]     .sev { background: var(--proof-xl); color: var(--proof); }
+[data-sev="medium"]   .sev { background: var(--kraft-xl); color: var(--kraft); }
+[data-sev="low"]      .sev { background: var(--kraft-xl); color: var(--ink-mute); }
+.tag {
+  font-size: 10.5px; color: var(--press); border: 1px solid var(--press);
+  border-radius: 3px; padding: 2px 6px; letter-spacing: .1em; opacity: .85;
+}
+
+.find h3 { margin-bottom: 12px; }
+.moment {
+  font-size: 15.5px; line-height: 1.62; color: var(--ink-soft);
+  border-left: 2px solid var(--rule); padding-left: 16px; margin: 0 0 15px;
+}
+.moment strong { color: var(--ink); font-weight: 500; }
+.fix { font-size: 15.5px; line-height: 1.62; margin: 0; }
+.fix::before {
+  content: "Fix"; display: inline-block; font-family: var(--mono); font-size: 10.5px;
+  font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--proof);
+  margin-right: 10px; vertical-align: 1.5px;
+}
+.copy {
+  display: block; font-family: var(--display); font-size: 16px; line-height: 1.5;
+  background: var(--kraft-xl); border-radius: 6px; padding: 13px 16px; margin: 12px 0 0;
+  color: var(--ink);
+}
+.copy em { color: var(--proof); font-style: italic; }
+
+/* ── the one thing ────────────────────────────────────────── */
+.one {
+  background: var(--ink); color: var(--paper); border-radius: 14px; max-width: 54rem;
+  padding: clamp(32px, 5vw, 56px); margin-top: clamp(46px, 7vw, 84px);
+}
+.one .eyebrow { color: var(--kraft); }
+.one h2 { color: var(--paper); font-size: clamp(26px, 3.6vw, 38px); }
+.one h2 em { font-style: italic; color: var(--kraft); }
+.one p { color: var(--paper); opacity: .84; max-width: 42rem; }
+.one p:last-child { margin-bottom: 0; }
+.one strong { opacity: 1; font-weight: 700; }
+
+/* ── leave alone ──────────────────────────────────────────── */
+.alone { display: grid; gap: 0; max-width: 46rem; }
+.alone > div { padding: 17px 0; border-bottom: 1px solid var(--rule); }
+.alone h3 { font-size: 17.5px; margin-bottom: 5px; }
+.alone p { font-size: 15.5px; color: var(--ink-soft); margin: 0; }
+
+footer {
+  margin-top: clamp(52px, 8vw, 96px); padding: 30px 0 60px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 12px; color: var(--ink-mute);
+}
+
+@media (max-width: 44rem) {
+  .batch__head { grid-template-columns: 1fr; gap: 4px; }
+  .batch__why { grid-column: 1; }
+  .meta { gap: 0 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <svg class="regmark" viewBox="0 0 42 42" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+      <circle cx="21" cy="21" r="13"></circle><circle cx="21" cy="21" r="5.5"></circle>
+      <path d="M21 0v42M0 21h42"></path>
+    </svg>
+    <span class="stamp">Proof · Round 3</span>
+    <h1>Behind the <em>counter</em></h1>
+    <p class="dek">Seven reviewers walked the custom quote builder as one person: a single-shop coffee owner who has never bought printed cups, found Hot Cup Factory today, and is doing this on a phone between customers.</p>
+
+    <div class="meta">
+      <div>raw findings<b>96</b></div>
+      <div>after merging<b>36</b></div>
+      <div>lenses<b>7</b></div>
+      <div>independently verified<b>6 / 6</b></div>
+      <div>fixed already<b>1</b></div>
+    </div>
+  </header>
+
+  <section class="col tight">
+    <div class="fixed">
+      <p class="eyebrow">Shipped during the audit</p>
+      <h3>Every screen narrower than about 1100px was scrolling sideways</h3>
+      <p>At 390px the page rendered <b>706px wide</b> — nearly twice the phone. The five category pills are one unwrapped row, and a grid track is <code>min-width: auto</code> by default, so that row pinned the whole page to its own width and <code>overflow-x: auto</code> on the pill strip never got a chance to work.</p>
+      <p>One line — <code>.b1-grid &gt; * { min-width: 0 }</code> — fixes it. Verified clean from 360px to 1440px on all five screens. The audit below assumes this fix is in.</p>
+    </div>
+  </section>
+
+  <section class="col walk">
+    <p class="eyebrow">The walkthrough</p>
+    <h2>What actually happens to a stranger</h2>
+
+    <p class="lede">I'm on my phone. The first screen is genuinely good: a black bar promising free design proofs, a real logo, four numbered steps, and then the thing that matters — two large photographs of actual printed cups on a counter. Jethro's. Onyx. Someone's real logo, printed, in the world. Within three seconds I believe HCF can do this. Most B2B print sites never clear that bar.</p>
+
+    <p>Then I read the subhead: <q>Pick a product, choose a size and quantity, add it. Nothing here is a purchase.</q> That's an instruction and a disclaimer. It doesn't tell me what I get for doing it — whether a price comes back, by email or by phone, today or next week. The sentence that half-answers it sits in 11px grey three screen-heights down. So I start the work not knowing the reward. I'll do it anyway, because the photos earned me.</p>
+
+    <p>Each card says <code>MIN 1,000 / 1 case</code>. A thousand cups is the number that decides whether this company is for someone my size, and it arrives with no noun and no context. A thousand what, over what period, and is that a lot?</p>
+
+    <p class="beat">The tap that looks like nothing</p>
+
+    <p>I tap the Jethro's cup. <strong>Nothing visibly happens.</strong> A thin dark ring appears round the tile, and that's it — the configurator that just opened starts 653px down, and only 124px of its top edge is above the fold. The size chips are 107px below it. The page does not scroll itself. I tap again — still nothing, because it's already open. This is the core interaction of the whole builder, and on the device I'm holding it looks broken.</p>
+
+    <p>I do scroll, and it's good again. Sizes, quantities, a blue note, a big orange button. The compare mechanic — tap 5,000 <em>and</em> 10,000 and it promises to price each separately — is genuinely clever and exactly right for someone who doesn't know their volume. But at the moment I'm most unsure, with one quantity picked and my thumb hovering, the hint beside the button is <strong>empty</strong>. The feature that exists for people who don't know only speaks after you've already used it.</p>
+
+    <p>The blue note says <q>90mm top rim — fits our standard 90mm hot cup lids. Pairs with a sleeve for hotter drinks.</q> Good, so I need lids. There is no lids tab, no lids product, and nowhere in five screens to type "and lids, please."</p>
+
+    <p class="beat">The add that reads as a rejection</p>
+
+    <p>I tap "Add both to my quote". The button under my thumb turns grey, the chips deselect, and the text beside it says <strong>"Pick a size."</strong> Which is what it said before I did anything. Everything within reach of my thumb now reads as <em>that didn't work</em>.</p>
+
+    <p>Then nothing invites me to add anything else. The loudest thing on screen is a solid orange <strong>Review &amp; continue</strong>. The category pills read like a filter I already used. I came for cups, sleeves and something cold; the only forward motion says <em>Review</em>.</p>
+
+    <p>If I do go looking, I hit the trap. I tap "Coffee Sleeves" to peek, then "Coffee Cups" to come back — and my 16 oz and my 5,000 are gone, the product is deselected, and the configurator has collapsed to "Pick a product above." Nothing told me. On desktop the header is simultaneously promising my progress saves automatically.</p>
+
+    <p class="beat">Two tabs, one coin flip</p>
+
+    <p>Cold drinks are a guess: "PET Cold Cups" and "Cold Paper Cups". I don't know what PET is. Nothing on either tab says which is for me, and I can't see them side by side. Same on the first screen — Single Wall and Double Wall carry identical spec blocks, and the sentence that distinguishes them lives inside the configurator, one product at a time, so I can never read both at once.</p>
+
+    <p>Review is the best screen in the build. Grouped by category, alternatives shown as alternatives, quantities nudgeable. Two things spoil it: three identical grey ✕ glyphs per line, one of which deletes the whole product with no undo — and "5 cases" appearing next to <strong>5,000</strong> cups and next to <strong>500</strong> jars on the same screen, because a case quietly means 1,000 for cups and 100 for jars.</p>
+
+    <p class="beat">Four questions, one of them a trap</p>
+
+    <p>"When do you need them in hand? — <q>Tells us straight away whether we can hit your date.</q>" I tap <strong>2–3 weeks</strong>, because my reopening is in three weeks. Nothing happens. Nothing on my quote can ship that fast — the jars run 4–5 weeks — and the screen that promised to tell me says nothing. I move on believing my date is fine.</p>
+
+    <p class="beat">The silent form</p>
+
+    <p>Four fields, only Phone marked. I trade under my own name so I leave "Business name" blank and press <strong>Send my request</strong>. One border turns orange — the <em>same</em> orange as the button I just pressed, which reads as a highlight, not an error. No words appear anywhere. I press again. Nothing. At the last step, after all the work, the form goes silent.</p>
+
+    <p>Say I get through. "Request sent." Then <q>Custom cups in 3 simple steps</q> — I ordered cups, sleeves and jars. I read the three steps twice looking for the one where somebody shows me a price and I say yes, and it isn't there. The headline figure is <strong>Total units 8,500–13,500</strong>, a number that adds cups to sleeves to jars and folds my either/or into a range, set in bold tabular figures in the exact slot where every checkout puts the money.</p>
+
+    <p>And then, at the very bottom, after my details are gone: <q>Order a free sample box — get real cups in your hands before you order a single case.</q> Which is what I wanted before I started.</p>
+  </section>
+
+  <section class="col">
+    <p class="eyebrow">Credit where it's due</p>
+    <h2>What's working</h2>
+    <ul class="works">
+      <li><span><b>The photographs.</b> Real printed jobs on real counters, full tile width on mobile. They prove HCF can put <em>my</em> logo on a cup in three seconds and no copy.</span></li>
+      <li><span><b>The compare mechanic.</b> A line holding 5,000 <em>or</em> 10,000 as alternatives, never summed, carried intact through rail, review and recap. The right model for a buyer who doesn't know their volume.</span></li>
+      <li><span><b>Single-product categories auto-open.</b> Four of six products land on working controls instead of another decision.</span></li>
+      <li><span><b>The Review screen's structure.</b> Grouped by category, per-quantity steppers, alternatives as separate rows. The clearest screen in the build.</span></li>
+      <li><span><b>Progress survives.</b> Quote, answers, tab and screen persist across a reload and a closed tab, and sending is properly terminal.</span></li>
+      <li><span><b>The email is genuinely last.</b> Four visible steps, contact at the end, no gate before it. The shape of the flow is honest even where the copy fails to say so.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="col">
+      <p class="eyebrow">36 findings, 8 shippable batches</p>
+      <h2>The findings</h2>
+      <p>Each batch is a coherent unit you could ship on its own. Severity is judged from the visitor's side: <strong>high</strong> means they abandon, submit something wrong, or misunderstand what they agreed to.</p>
+    </div>
+    <nav class="batchnav" aria-label="Jump to batch">
+      <a href="#a"><b>A</b>Pre-flight</a>
+      <a href="#b"><b>B</b>Works on a phone</a>
+      <a href="#c"><b>C</b>What they get</a>
+      <a href="#d"><b>D</b>Stop losing work</a>
+      <a href="#e"><b>E</b>More than one thing</a>
+      <a href="#f"><b>F</b>Choosable choices</a>
+      <a href="#g"><b>G</b>Misleading numbers</a>
+      <a href="#h"><b>H</b>Words they don't use</a>
+    </nav>
+
+    <!-- ── A ─────────────────────────────────────────────── -->
+    <div class="batch" id="a">
+      <div class="batch__head">
+        <div class="batch__letter">A</div>
+        <h2 class="batch__title">Pre-flight — don't let this reach a customer</h2>
+        <p class="batch__why">One item. It is in the header of all five screens right now, on the link you send people.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="critical">
+          <div class="slug"><span class="id">A1</span><span class="sep">/</span><span class="sev">Critical</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">header, all screens</span></div>
+          <h3>"Product photos" in the header opens an internal build tool</h3>
+          <p class="moment">Beside the logo the header offers exactly two things, and on mobile the third item is hidden entirely. <strong>"Product photos" is the only plain link on the page</strong> and it promises to show something without asking for anything — a natural first click. It opens a panel headed "Prototype tool / Set product photos", with per-product file pickers, a "Copy all for Claude" button and a textarea of encoded image data, on the same page that will shortly ask for their email. One tap on "Choose image" permanently replaces HCF's real cup photography with the visitor's own file across the tile, configurator, rail and review — and it survives reload.</p>
+          <p class="fix">Delete the header button. Gate the panel behind <code>?photos=1</code> and have it refuse to run without the flag. Don't replace it with a gallery link — the tiles below the headline are already photographs of real printed jobs.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- ── B ─────────────────────────────────────────────── -->
+    <div class="batch" id="b">
+      <div class="batch__head">
+        <div class="batch__letter">B</div>
+        <h2 class="batch__title">Make it work on a phone</h2>
+        <p class="batch__why">On the device the persona is holding, the two actions that <em>are</em> the builder — open a product, add a product — produce no visible response, or a misleading one.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">B1</span><span class="sep">/</span><span class="sev">High</span><span class="tag">measured</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Tapping a product opens the configurator below the fold, and the page doesn't move</h3>
+          <p class="moment">Measured on the current build at 390px: <strong>scroll position 0, configurator top at 653px, usable fold at 777px.</strong> 124px of a white card edge is visible; the SIZE chips sit at 884px, 107px below the fold. On desktop the tiles are 160px and the whole configurator lands in view, so this fails on mobile only.</p>
+          <p class="fix">Scroll the configurator heading into view on tap, offset ~70px for the sticky header. Below 34rem, crop the tile photo to 3:2 instead of 1:1 — that lifts the configurator about 200px and keeps a second row of products reachable.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">B2</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>After a successful add, the controls under your thumb say "Pick a size"</h3>
+          <p class="moment">Confirmed on the current build — the configurator foot reads <code>Add to my quote · Pick a size</code> immediately after a successful add, the same words shown before you did anything. The real confirmation is a card 145px further down that a mobile user has never seen, plus a silent counter change in the bottom bar. On desktop the rail is at eye level and this doubt never arises.</p>
+          <p class="fix">Never show demand text in the instant after a success. Replace the foot with confirmation that also carries the next move — see E1; these are one element and one fix.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">B3</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">measured</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Two of five categories sit off the right edge with no cue the strip scrolls</h3>
+          <p class="moment">At 390px the pill row is 690px wide in a 343px window — <strong>Coffee Sleeves is cut, Cold Paper Cups and Mason Jars are never seen.</strong> The scrollbar is hidden, there's no fade and no chevron, and the instinct on a page is to scroll down, not swipe a chip row sideways. The strip also never scrolls the active tab into view, so a restored session on Mason Jars shows three unselected pills above a mason jar.</p>
+          <p class="fix">Wrap the pills onto two rows below 34rem — five short pills fit comfortably at 390px and the discovery problem disappears. If the scroller stays, add a right-edge gradient mask and scroll the active tab into view on every render.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">B4</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">measured</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build → Contact</span></div>
+          <h3>The fourth step's label is clipped, so the phone can't show that step 4 is where you hand over your details</h3>
+          <p class="moment">Measured: the rail is 479px wide in a 375px window and "Contact" is cut off. The one fact that relaxes a wary person — <strong>four steps, and the personal bit is last</strong> — is the fact the phone hides.</p>
+          <p class="fix">Below 34rem drop the rail to 12px and tighten the gap so all four labels fit. Failing that, replace it with one line: <span class="copy">Step 1 of 4 — Products, Review, Details, then where to send your quote.</span></p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">B5</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">measured</span><span class="sep">·</span><span class="where">Review</span></div>
+          <h3>The controls you steer with are a third of a thumb</h3>
+          <p class="moment">Measured at 390px: the review steppers are <strong>37×27px</strong> and every ✕ is <strong>23×26px</strong>, against a 44px minimum. Changing a sleeve from 3,000 to 10,000 is seven precise taps on a sub-thumb target with the list re-rendering under your finger. And "+" dies silently at 9,000 when 10,000 is the other compared quantity — correct logic, zero explanation.</p>
+          <p class="fix">Raise −/+ to 44px and make the number itself tappable below 48rem, opening a numeric input snapped to whole cases. Replace every silent disabled state with a note under the row: <span class="copy">9,000 is as high as this can go — 10,000 is your other option.</span></p>
+        </article>
+
+        <article class="find" data-sev="low">
+          <div class="slug"><span class="id">B6</span><span class="sep">/</span><span class="sev">Low</span><span class="tag">verified</span><span class="sep">·</span><span class="where">header, Build mobile</span></div>
+          <h3>The phone number isn't tappable, and the bottom bar opens on "0 units"</h3>
+          <p class="moment">The number is a plain span, so tapping it does nothing, and the calling hours are hidden below 46rem — so "Mon–Thu 9am–5pm MT" is desktop-only. Meanwhile the fixed bottom bar is already on at first paint reading zeros beside a greyed Review that ignores taps, which for someone worried about accidentally buying something is a checkout-shaped first impression.</p>
+          <p class="fix">Wrap the number in a <code>tel:</code> link and keep a short "Mon–Thu 9–5 MT" on mobile. Hide the bottom bar until the first line exists, so its appearance becomes the reward for the first add.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- ── C ─────────────────────────────────────────────── -->
+    <div class="batch" id="c">
+      <div class="batch__head">
+        <div class="batch__letter">C</div>
+        <h2 class="batch__title">Say what they get, and when</h2>
+        <p class="batch__why">The page asks for four screens of work before it states the reward, and offers its reassurance after the anxiety has already passed.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">C1</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>The first screen never says what comes back, by what channel, or how soon</h3>
+          <p class="moment">The headline names the work. The subhead is pure instruction. The one sentence that answers the question they arrived with — <q>No payment — we price this and get back to you</q> — is 11px grey, centred, beneath a <strong>disabled</strong> button, at the foot of a rail that on mobile sits three viewport-heights down. It never names email, a person, or a timeframe. The real promise only appears at step four.</p>
+          <p class="fix">Put it in the subhead, the one element on the first screen a phone user is guaranteed to read.
+            <span class="copy">Pick your products, sizes and quantities. <em>We'll email you a price and a lead time — usually within one business day.</em> Nothing here is a purchase, and you don't need artwork yet.</span>
+            That single line also carries C2 and half the artwork problem. Make clear the one business day is the <em>reply</em>, not the delivery — the tiles say 3–4 weeks.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">C2</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×4 lenses</span><span class="sep">·</span><span class="where">Build, Details</span></div>
+          <h3>Nothing tells a first-time buyer what HCF needs from them about their logo</h3>
+          <p class="moment">The photos prove it's possible; nothing says what's required of them. The only artwork copy before the confirmation is the announcement bar's "Free design proofs on every custom order" — and "proof" is a trade word they've never used. The bar isn't sticky, so it scrolls away before the size chips. Then step 3 asks <q>How many colours in the print?</q>, which presumes an artwork they don't have. <strong>The most predictable rep follow-up to this customer is "do you have a logo file, and in what format?"</strong> — so the discovery call this tool exists to prevent happens anyway.</p>
+          <p class="fix">The C1 subhead carries the reassurance. Then <em>replace</em> the colours question rather than adding a fifth — the screen sells itself as "four taps":
+            <span class="copy"><b>What have you got for artwork?</b> · Optional<br><em>Any of these is fine — we redraw for print at no charge.</em><br>Print-ready file · A logo image · Just my sign or socials · Nothing yet, need help</span>
+            Colour count is worth far more asked by a designer against a real file than guessed by a stranger.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">C3</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Confirmation</span></div>
+          <h3>The "3 simple steps" skip the step where they see a price and say yes</h3>
+          <p class="moment">Ten seconds after sending: 01 you told us what you need (tagged <em>You are here</em>); 02 <q>once your order details are confirmed, we create your cup design</q>; 03 once we receive your approval, we print and ship. They confirmed details on the Review screen, so 02's precondition feels ticked, and the only approval named is of a <em>design</em>. They scan for the step where a price is shown and they agree to it — on the last screen, after their email is already gone.</p>
+          <p class="fix">Put the quote and the yes in front.
+            <span class="copy"><b>02 — Your quote.</b> We email your price and lead time. If it works for you, you say go — and only then do we start your design.<br><b>03 — Free design proof.</b> We mock up your logo on the cup. Nothing prints until you approve it.<br><b>04 — We print &amp; ship.</b></span>
+            And one line under the tick: <em>Nothing is printed and nothing is charged until you've seen a price and said yes.</em></p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">C4</span><span class="sep">/</span><span class="sev">Medium</span><span class="sep">·</span><span class="where">whole flow</span></div>
+          <h3>The flow never says why there are no prices, so the required email reads as the price being held back</h3>
+          <p class="moment">They came to find out roughly what this costs. Five screens, no figure, no explanation of the absence — only "we price this and get back to you", three times. By the time email turns out to be required at step four, the obvious reading is <strong>they won't show me a price until they have my details</strong> — the exact thing they were wary of. This is about the <em>handling</em> of the no-pricing decision, not the decision.</p>
+          <p class="fix">Name the reason once, at the top of Review and again beside the send button. No numbers, just the why: <span class="copy">Custom print pricing moves with size, quantity and colour count, so there's no shelf price to show you. You'll get a written price by email — not a call-first pitch.</span></p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">C5</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="sep">·</span><span class="where">Contact</span></div>
+          <h3>No word anywhere about what happens to their name, email and phone — and the page has no footer</h3>
+          <p class="moment">They're typing an email into a site they found an hour ago. The only line under the button answers money, not data. The Phone hint says it's "the fastest way to sort out details", so somebody may call, but nothing says whether that's one call or a cadence. No privacy link, and the page ends in white space below the form — no address, no terms. It reads as a floating lead-capture form rather than part of a real company's site.</p>
+          <p class="fix">One line under the send button, at the weight of the existing assurance: <span class="copy">We use these to send your quote and nothing else — no marketing emails unless you ask, and we never share your details.</span> Link a privacy policy from it, and give the flow a minimal footer.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">C6</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="sep">·</span><span class="where">Confirmation</span></div>
+          <h3>Nothing proves the promised copy was emailed, or to which address</h3>
+          <p class="moment">The Email hint promised <q>we'll send a copy of this request so you have it on file</q> — part of why they gave the address. The confirmation lists products, total and "Needed by". Their email isn't on it. Their name isn't on it. No reference number, no "a copy is on its way", and they typed that address one-handed thirty seconds ago. Compounding it: the form only checks the field is non-blank, so <code>jane@</code> sends happily and dies silently.</p>
+          <p class="fix">Under the tick: <span class="copy">Copy sent to jane@brewbar.com — check your inbox in the next few minutes.</span> Add a reference number, include name, business, email and phone as rows in the recap, add a quiet "Wrong email? Send it again" link, and validate the address shape at submit.</p>
+        </article>
+
+        <article class="find" data-sev="low">
+          <div class="slug"><span class="id">C7</span><span class="sep">/</span><span class="sev">Low</span><span class="tag">verified</span><span class="sep">·</span><span class="where">Contact, Confirmation</span></div>
+          <h3>"Usually the same business day" is contradicted by the opening hours in the same viewport</h3>
+          <p class="moment">It's Friday afternoon. The body copy says "gets back to you — usually the same business day"; 300px above, the black bar says "Mon–Thu 9am–5pm MT". They can't tell whether that means an hour or Monday, or whether their phone will ring mid-service.</p>
+          <p class="fix"><span class="copy">We'll email your quote — usually within one business day. We're open Mon–Thu 9am–5pm MT, so anything sent after Thursday comes back Monday. We'll only call if you left a number and it's quicker.</span></p>
+        </article>
+      </div>
+    </div>
+
+    <!-- ── D ─────────────────────────────────────────────── -->
+    <div class="batch" id="d">
+      <div class="batch__head">
+        <div class="batch__letter">D</div>
+        <h2 class="batch__title">Stop destroying their work</h2>
+        <p class="batch__why">Four places where a normal action silently loses something, on a page that promises it saves automatically.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">D1</span><span class="sep">/</span><span class="sev">High</span><span class="tag">reproduced</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Peeking at another category silently discards the size and quantity you'd staged</h3>
+          <p class="moment">Reproduced in the browser: with Single Wall open and 16 oz + 5,000 selected, tapping "Coffee Sleeves" and then "Coffee Cups" leaves the configurator collapsed to "Pick a product above" — <strong>size gone, quantity gone, product deselected, no message, no undo.</strong> The infoline directly above the button says "Pairs with a sleeve for hotter drinks", so the build itself sends them to that pill. It only fully collapses on Coffee Cups — which is the default tab and where everyone starts.</p>
+          <p class="fix">The build already knows the right rule: the <em>tile</em> handler clears staged choices only when the open product actually changes, and restore deliberately reopens the last-open product after a reload. Apply the same rule to tabs — track the last-open product per category, reopen it on return, drop the unconditional clear. A pill round-trip shouldn't be more destructive than closing the browser.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">D2</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Contact</span></div>
+          <h3>Pressing "Send my request" with a blank field produces no words at all</h3>
+          <p class="moment">Four fields styled identically; only Phone is annotated as optional, so the other three read as optional too. On a failed submit the handler focuses the field and sets its border to <code>var(--rm)</code> — which is <strong>#FD822C, the brand orange, the same colour as the button they just pressed.</strong> It reads as a highlight, not an error. No message appears anywhere. On a phone the keyboard covers the button. They press again, get the same silence, and conclude the form is broken at the exact moment they were handing over their details.</p>
+          <p class="fix">Mark the three required fields in their labels, using the Required/Optional pills step 3 already has. On failure render a message under the offending field in a colour that is <em>not</em> the brand orange: <span class="copy">Your shop's name is fine — whatever's on the sign.</span> Scroll the first error into view under the sticky header rather than relying on focus. Never let a press of "Send my request" produce zero visible text.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">D3</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Review</span></div>
+          <h3>Three identical ✕ glyphs per line, no undo, and deleting your last line ejects you to the start</h3>
+          <p class="moment">On a comparing line the same grey ✕ appears at the line's top-right (deletes the whole product) and beside each compared quantity (drops one alternative). Same glyph, same weight, no labels, all about 26px. Nothing distinguishes them but position. There's no confirmation and no undo — and removing your only line replaces the Review screen with the build screen, scrolled to top, with an empty rail and no explanation.</p>
+          <p class="fix">Below 40rem give the two actions different shapes: keep the per-quantity control inline but relabel it as a chip — <em>Stop comparing 10,000</em> — and make the line-level control a 44px text button reading <em>Remove</em>. Add an inline undo strip after any removal, persisting about eight seconds. Never auto-navigate when the list empties; show an empty review state with an "Add products" button.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">D4</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Returning to a size already on the quote presents two near-identical buttons</h3>
+          <p class="moment">They added 12 oz at 5,000, come back, tap 12 oz and 3,000. The foot shows an orange <em>Add quantity</em> beside a white <em>Update quantity</em>, with the difference explained in 13px grey. With no mental model of a line holding several alternatives, they press the orange one because orange means go — and ask to be priced at three quantities they didn't intend. Or they press Update and silently lose the 5,000. Neither looks wrong on the Review screen. Getting there at all is awkward: the rail line isn't clickable, so the only route back is re-finding the tile.</p>
+          <p class="fix">Collapse it to one control. When a size is already on the quote, show its current quantities as removable chips under the label — <em>On your quote: 5,000 ✕ 10,000 ✕</em> — let tapping a tier toggle it in or out, and offer a single <em>Save changes</em>. No add-versus-replace decision to explain, no grey sentence to read. Make rail lines tappable so "edit" has an obvious entry point.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- ── E ─────────────────────────────────────────────── -->
+    <div class="batch" id="e">
+      <div class="batch__head">
+        <div class="batch__letter">E</div>
+        <h2 class="batch__title">Let them ask for more than one thing</h2>
+        <p class="batch__why">The builder exists to replace "I want custom cups, call me" with a multi-line spec. Every affordance for a second line is missing, quiet, or on the wrong screen.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">E1</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>After the first product lands, nothing invites a second</h3>
+          <p class="moment">Add 12 oz cups and <em>Review &amp; continue</em> flips from grey to solid orange, becoming the brightest element on the page — on mobile there are now <em>two</em> orange Review buttons in view. The configurator below still shows the same cup with a dead grey button and the words "Pick a size". The string "Add more products" occurs <strong>exactly once in the entire file</strong>, as a quiet underlined link on the <em>Review</em> screen. And the one line that coached them — "Nothing added yet. Pick a product to start your quote request." — is the rail's empty state, so it's destroyed by the very first add.</p>
+          <p class="fix">One element solves this and B2 together. On a successful add, replace the configurator foot with:
+            <span class="copy">✓ <b>Added — 12 oz Single Wall Paper Cup, 5,000 or 10,000.</b> Anything else for the same request?<br><em>PET Cold Cups · Coffee Sleeves · Cold Paper Cups · Mason Jars</em></span>
+            Those pills switch tab and scroll the grid into view. Add a standing label above the tab strip — <em>Add any of these to the same request</em> — so the pills read as an inventory, not a filter.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">E2</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×5 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>The builder names lids twice and cannot sell them</h3>
+          <p class="moment">The Single Wall note reads <q>90mm top rim — fits our standard 90mm hot cup lids.</q> The Mason Jar note reads <q>Lids sold separately.</q> Separately from where? Five tabs, no lids, no straws, no napkins, no carriers. <strong>You cannot serve a hot drink without a lid</strong>, so they now don't know whether what they're about to send is a whole order or half of one. The most reliable attach item on a cup order is described and then not offered. Found independently by five of seven lenses — the strongest signal in the audit.</p>
+          <p class="fix">Either add a Lids &amp; Accessories category, or make the mention itself the control — turn the note into an inline checkbox, <em>Also quote matching 90mm lids</em>, and answer the buyer's real question: <span class="copy">Standard 90mm rim — the common size, so most shops' existing lids fit. Tick above and we'll price ours alongside your cups.</span> Never name a companion product in copy the builder can't add.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">E3</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">whole flow</span></div>
+          <h3>There is no free-text field anywhere in five screens</h3>
+          <p class="moment">Three lines built, and step 3 is four chip questions and nothing else. Step 4 is name, business, email, phone, send. They have things to say: <em>I also need lids and napkins. Can you do a 10 oz? I only need 500 to start. My logo is a JPG — will that work? I need these before we open on the 14th.</em> Their thumb hovers over the orange button knowing the request is wrong.</p>
+          <p class="fix">An optional textarea as the last item on step 3: <span class="copy"><b>Anything else we should know?</b><br><em>Lids, straws, a size you can't see here, a deadline, a question about your logo — anything.</em></span> Echo whatever they wrote into the confirmation recap so they can see it travelled.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">E4</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×4 lenses</span><span class="sep">·</span><span class="where">Confirmation</span></div>
+          <h3>The free sample box — the wary first-timer's first ask — only exists after they've submitted</h3>
+          <p class="moment">Before committing to 1,000 printed cups from a company found this morning, they want to hold one. Nothing on any of the first four screens mentions samples. The offer appears only on the confirmation, in the black panel, <strong>whose own copy is an argument for putting it first</strong>: <q>Get real cups in your hands before you order a single case.</q> Their only non-committal alternative through the whole flow is "Talk to us instead" — the phone call they're avoiding.</p>
+          <p class="fix">Put the sample route on the first screen as a genuine alternative, not a consolation — a quiet line in the configurator foot and on the empty rail: <span class="copy">Not ready to spec anything? Get a free sample box first — real cups, no obligation.</span> Carry whatever they've built into that flow. Keep the confirmation panel for people who finished, and reword it so nothing has to be checked twice: the heading says "Order" while the button says "Send me", which pull in different directions for someone scanning for hidden purchases.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">E5</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Six products behind five tabs, four of them alone, and no view of the whole range</h3>
+          <p class="moment">They arrived to find out whether HCF can do "a handful of things". The tab row looks like five departments; four hold exactly one product. Answering their actual question means tapping all five pills and holding six products in their head — and on mobile two pills are off-screen entirely. On desktop the tile grid is hard-capped at 160px, so Coffee Cups renders two thumbnails against roughly 620px of empty column. <strong>The photographs — the one piece of evidence that HCF really prints cups — are shown at postage-stamp size.</strong></p>
+          <p class="fix">Three changes, one shippable unit. Add an <em>All products</em> pill, selected by default, showing all six tiles in one grid with the category as a label on each card. Raise the tiles to <code>minmax(240px, 1fr)</code> so the photos are legible. And skip the tile row entirely when a category holds one item — the configurator already opens and repeats the same photo, name, minimum and lead time.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- ── F ─────────────────────────────────────────────── -->
+    <div class="batch" id="f">
+      <div class="batch__head">
+        <div class="batch__letter">F</div>
+        <h2 class="batch__title">Make the choices choosable</h2>
+        <p class="batch__why">Every decision on the build screen is a pair of near-identical spec blocks with the deciding fact hidden one click deeper, or absent.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">F1</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Single Wall and Double Wall sit side by side with nothing saying which one my shop should buy</h3>
+          <p class="moment">The default tab shows exactly two cards. Both say <code>MIN 1,000 / 1 case</code>; one says <code>SHIPS 3–4 wk</code>, the other <code>4 wk</code>. Identical but for four days. "Wall" is not a word they use. The sentence that actually distinguishes them — <q>Insulated, no sleeve needed</q> versus <q>Pairs with a sleeve for hotter drinks</q> — lives in the blue infoline, which appears only after clicking, one product at a time. <strong>They can never see both at once, so they cannot compare.</strong> They pick the photo they like better.</p>
+          <p class="fix">Put the differentiator on the tile, one plain line under the name and above the spec grid.
+            <span class="copy"><b>Single Wall</b> — Standard hot cup. Needs a sleeve for hot drinks.<br><b>Double Wall</b> — Insulated. No sleeve needed.<br><b>Cup Sleeve</b> — Slides onto a single wall cup.<br><b>Clear PET</b> — See-through plastic for iced drinks.<br><b>Paper Cold Cup</b> — Opaque paper for iced drinks, prints edge to edge.<br><b>Plastic Mason Jar</b> — Shatterproof jar for shakes, floats and iced drinks.</span></p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">F2</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Nothing relates the quantity chips to how many cups a shop like theirs actually goes through</h3>
+          <p class="moment">"HOW MANY?" offers 1,000 / 3,000 / 5,000 / 10,000, captioned "1 CASE · MIN", "3 CASES", "5 CASES", "10 CASES". <strong>The captions restate the same number in a different unit</strong> — they say how the factory packs it, not how long it lasts. They've never bought cups: is 1,000 a fortnight or a year? And every route forward is behind a number they can't supply — the Add button stays grey, the rail button stays disabled, the mobile bar reads "0 units". Meanwhile the very next screen offers "Not sure yet" on the colours question, so the escape hatch exists, just not where it's hardest.</p>
+          <p class="fix">Two changes, no pricing disclosed. Add a consumption anchor as a third line on each chip — <em>1,000 — about 2 weeks at 100 cups a day</em> — with a quiet <em>Most single shops start here</em> flag on one tier. Then add a fifth chip, <em>Not sure yet</em>, which stages the line at the minimum and tags it for the rep as <em>help me size this</em>.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">F3</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="tag">×4 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>"PET Cold Cups" and "Cold Paper Cups" force a material decision they cannot make</h3>
+          <p class="moment">They sell iced lattes. Two tabs claim that job and one is a resin acronym. Opening PET gives <q>Crystal clear — prints best in one or two solid colours</q> and never says plastic; opening Cold Paper gives <q>Poly-lined for cold drinks</q>, two more unknown terms. They are never on screen together, and each tab switch wipes anything staged (D1).</p>
+          <p class="fix">Merge them into one <em>Cold Cups</em> category so the two alternatives sit side by side as cards, with the material on the card face and a "choose this when" line that references the other option: <span class="copy"><b>Clear PET</b> — See the drink through the cup: iced lattes, cold brew, layered drinks. Best with a simple 1–2 colour logo.<br><b>Paper Cold</b> — Opaque like a hot cup. Choose this when you want full-colour artwork wrapping the whole cup.</span> If the tabs must stay separate, at minimum rename to <em>Clear Plastic Cold Cups</em>.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">F4</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>The compare feature goes silent at exactly the moment they're unsure</h3>
+          <p class="moment">The invitation is an 11px grey aside beside a 10px uppercase label — read as instructions for the control, not as an answer to their problem. They pick 5,000 because they have to pick something. At that instant, one quantity selected and thumb hovering, genuinely torn, <strong>the hint text is the empty string.</strong> Only if they happen to tap a second chip does the interface say "We'll price each of these separately". The feature that exists because buyers don't know is invisible to buyers who don't know.</p>
+          <p class="fix">Fill the empty hint. With exactly one quantity selected: <span class="copy">Not sure? Tap another and we'll price both — it costs you nothing.</span> And reword the field aside from a mechanic to an offer: <em>Torn between two? Pick both and we'll price each.</em></p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">F5</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>Sleeve sizes are named in cup sizes HCF doesn't sell, and the 8 oz cup has no sleeve at all</h3>
+          <p class="moment">The cup's note sends them to sleeves. The chips read "10/12/16 oz" and "20/24 oz" and the note says <q>Sized for our 10/12/16 oz coffee cups.</q> But the hot cups come in 8, 12, 16 and 20 oz. <strong>There is no 10 oz coffee cup on this site</strong>, so they go looking for one and can't find it — and if they picked the 8 oz cup, no sleeve on the screen admits to fitting it.</p>
+          <p class="fix">Label sleeve sizes by the cups they actually fit — <em>Fits 12 &amp; 16 oz</em>, <em>Fits 20 &amp; 24 oz</em> — and rewrite the note to name only sizes the builder sells. If nothing fits 8 oz, say so in the 8 oz cup's own configurator: <em>No sleeve fits our 8 oz — choose double wall if you want it insulated.</em></p>
+        </article>
+      </div>
+    </div>
+
+    <!-- ── G ─────────────────────────────────────────────── -->
+    <div class="batch" id="g">
+      <div class="batch__head">
+        <div class="batch__letter">G</div>
+        <h2 class="batch__title">Numbers that mislead</h2>
+        <p class="batch__why">Two numbers the interface states confidently that are either meaningless or silently contradicted elsewhere on the same page.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">G1</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build rail, Confirmation</span></div>
+          <h3>"Total units 8,500–13,500" sums cups, sleeves and jars, and sits in the price slot</h3>
+          <p class="moment">The rail holds 12 oz cups at "5,000 or 10,000 · COMPARING", 3,000 sleeves and 500 jars. The foot turns grey and shows <strong>Products 3</strong> and <strong>Total units 8,500–13,500</strong> in bold tabular figures, right-aligned, directly above a full-width orange button. <strong>That is the subtotal box of every checkout they've ever used, in the same place, with the same fill.</strong> Braced for a price, they read the bold number as money for a beat. Then it turns out to mean nothing anyway: it adds unlike goods and folds their either/or into an arithmetic range they never asked for. The same figure headlines the confirmation recap, so it's the last thing they see and the first thing they'd misquote back to the rep.</p>
+          <p class="fix">Stop aggregating across products. Replace the two rows with something that can't be misread as money and respects the alternatives — <em>3 products · 4 quantities to price</em> — and let the per-line "5,000 or 10,000 units · comparing" carry the numbers. Drop the grand total from the recap and drop the bold tabular treatment that mimics a subtotal.</p>
+        </article>
+
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">G2</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Details</span></div>
+          <h3>You can answer "2–3 weeks" when nothing on the quote can ship that fast, and the page says nothing</h3>
+          <p class="moment">Checked against the catalogue: <strong>only the sleeve runs 2–3 weeks.</strong> Every cup is 3–4 or 4 weeks; jars are 4–5. The first, required question is "When do you need them in hand?" and its subtitle promises <q>Tells us straight away whether we can hit your date.</q> The leftmost, most-tapped chip is 2–3 weeks. They tap it because their reopening is in three weeks. The chip turns black. Nothing else happens. Continue lights up. They start planning a launch around cups that cannot arrive — <em>and they believe HCF has confirmed the date, because the screen said it would tell them.</em></p>
+          <p class="fix">The tool already knows the slowest lead time on the quote. React in place, under the chips, the moment one is picked.
+            <span class="copy"><b>Clash:</b> Heads up — your mason jars run 4–5 weeks, so 2–3 weeks is tight. Keep the date and we'll come back with rush options, or call (480) 428-1999.<br><b>No clash:</b> That works for everything on your list.</span>
+            Keep their answer either way; just stop the contradiction being invisible. This also flags a genuine rush job HCF might upcharge.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- ── H ─────────────────────────────────────────────── -->
+    <div class="batch" id="h">
+      <div class="batch__head">
+        <div class="batch__letter">H</div>
+        <h2 class="batch__title">Words a café owner doesn't use</h2>
+        <p class="batch__why">The interface is written in the supplier's vocabulary. The persona is stopped by words rather than by decisions.</p>
+      </div>
+      <div class="finds">
+        <article class="find" data-sev="high">
+          <div class="slug"><span class="id">H1</span><span class="sep">/</span><span class="sev">High</span><span class="tag">verified</span><span class="tag">×2 lenses</span><span class="sep">·</span><span class="where">Build, Review</span></div>
+          <h3>"Case" carries the whole quantity model, is never defined, and silently changes size between products</h3>
+          <p class="moment">The configurator says "cases of 1,000"; the chips say "1 CASE · MIN", "3 CASES", "10 CASES"; Review says "Quantities move in whole cases". They've never bought wholesale — is a case a box, a pallet, a billing unit? They half-learn a case is 1,000. Then they open Mason Jars: "Minimum 500 · cases of 100". <strong>On the Review screen, "5 cases" appears next to 5,000 cups and next to 500 jars, on the same screen.</strong> The rule they just learned is wrong, nothing flags the change, and it reads as a mistake in HCF's system at the moment before they submit.</p>
+          <p class="fix">Define it once, at first contact, in the product's own terms: <span class="copy">Minimum 1,000 · ships in boxes of 1,000, so quantities go up in 1,000s · ready in 3–4 weeks</span> On Review: <em>Quantities move a box at a time — 1,000 for cups, 100 for jars.</em> On the chips, replace the case count with the consumption anchor from F2 and let one defining sentence carry the arithmetic.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">H2</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Build</span></div>
+          <h3>The minimum order is printed as "MIN 1,000" with no noun</h3>
+          <p class="moment">The single fact that decides whether HCF is possible for a one-shop café is a 10px uppercase "MIN", the number 1,000, and under it "1 case". <strong>The word "cups" appears nowhere on the tile.</strong> The configurator restates it as "Minimum 1,000 · cases of 1,000 · lead time 3–4 wk" — still no noun. And nowhere does the page say the minimum is <em>per size</em>, so adding 12 oz and 16 oz quietly doubles the floor and they only find out from the rail.</p>
+          <p class="fix">Label it <em>MINIMUM ORDER</em>, value <em>1,000 cups</em>, caption <em>one size, one design</em>; in the configurator, <em>Minimum 1,000 per size</em>. And one sentence in the empty slab above the tabs — the qualification decision, which currently exists nowhere: <span class="copy">Custom printing starts at 1,000 cups per size — about a month of cups for a busy single-location shop.</span></p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">H3</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="sep">·</span><span class="where">Build, Review</span></div>
+          <h3>The same number is called "SHIPS", "lead time" and "lead", and none says what starts the clock</h3>
+          <p class="moment">The tile says "SHIPS 3–4 wk / turnaround"; the configurator says "lead time 3–4 wk"; the review line says "lead 2–3 wk". Planning a reopening, they read "SHIPS 3–4 wk" as delivery and count from today. <strong>Nothing says the clock starts after they approve a proof</strong> — which they don't yet know exists.</p>
+          <p class="fix">One phrase in all three places — <em>Ready in 3–4 weeks</em> — with the caption <em>after you approve your proof</em> on the tile and the full sentence in the configurator: <em>Ready to ship 3–4 weeks after you approve your design proof.</em> Spell out "weeks"; "wk" saves four characters and costs a beat of parsing on every card.</p>
+        </article>
+
+        <article class="find" data-sev="medium">
+          <div class="slug"><span class="id">H4</span><span class="sep">/</span><span class="sev">Medium</span><span class="tag">verified</span><span class="tag">×3 lenses</span><span class="sep">·</span><span class="where">Details</span></div>
+          <h3>Three sales-vocabulary snags on the one screen with no reassurance line</h3>
+          <p class="moment">Steps 1, 2 and 4 all carry an assurance line; step 3 carries none. Instead it's the screen with <q>Affects tooling and turnaround</q> (tooling sounds like machinery and therefore money, and makes "Not sure yet" the safe answer before they've thought), <q>Helps us route you to the right rep</q> (the handover to a salesperson, starting), and <q>Recurring — contract pricing</q> — <strong>they'd genuinely reorder forever, but "contract" reads as something to sign, so they defensively tap "One-time" and cost HCF the lead it was fishing for.</strong></p>
+          <p class="fix">Carry the assurance line onto step 3 and rewrite three subtitles: <span class="copy"><b>colours</b> — More colours can add a little setup time. A rough guess is fine — we'll confirm it on your proof.<br><b>use</b> — So the right person prices it.<br><b>cadence</b> — If it turns into a repeat order we can move you onto better repeat pricing — nothing to sign now.</span> Add a third cadence chip: <em>Not sure — this is my first order.</em></p>
+        </article>
+
+        <article class="find" data-sev="low">
+          <div class="slug"><span class="id">H5</span><span class="sep">/</span><span class="sev">Low</span><span class="tag">verified</span><span class="sep">·</span><span class="where">various</span></div>
+          <h3>Six small copy defects that cost a beat each</h3>
+          <p class="moment">
+            <b>1.</b> With three quantities selected the button still says <em>"Add both to my quote"</em> — the plural helper returns the "many" string for anything above one, so it miscounts exactly the selection that "Pick more than one to compare" invited. <b>2.</b> The 6px orange dot marking "already on your quote" is explained only in a <code>title</code> attribute, which never fires on a phone. <b>3.</b> The confirmation says <em>"Custom cups in 3 simple steps"</em> and <em>"we create your cup design"</em> above a recap listing sleeves and jars. <b>4.</b> <em>"Continue"</em> on Review doesn't name its destination. <b>5.</b> The same idea is stated three ways on one line — the COMPARING pill, "5,000 or 10,000 units", and "Price each of these separately". <b>6.</b> <em>"Talk to us instead"</em> is the only outlined high-contrast control in the first viewport, wraps to two lines on a 390px phone, and the word <em>instead</em> offers an exit before there is anything to exit from.
+          </p>
+          <p class="fix">In order: <em>Add these 3 to my quote</em>, keeping "Add both" for exactly two; replace the size-chip dot with a visible micro-label; <em>Your 3 products in 3 simple steps</em> and "we create your artwork and send a proof for each product"; <em>Continue — four quick questions</em>; make the pill read <em>PRICE BOTH</em> and drop the separate subtitle; and reword the header button to <em>Questions? Call us</em>, single line on mobile, with a promise wherever it opens: <em>We'll keep everything you've built — a rep sees exactly this screen.</em></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="one">
+      <p class="eyebrow">If only one change gets made</p>
+      <h2>Fix the phone's response to a <em>tap</em></h2>
+      <p>Scroll the configurator into view when a product is opened, and confirm the add where the finger is — never with the words "Pick a size".</p>
+      <p>The persona is on a phone behind the counter, and on that device the two actions that <em>are</em> the builder both fail to report themselves. Tapping a product produces a thin ring and a card that starts below the fold, on a page that doesn't scroll itself — so the first interaction looks like a dead tap. Tapping "Add to my quote" greys the button and prints the words that appeared before they'd done anything — so the last interaction looks like a rejection.</p>
+      <p><strong>Everything else in this report costs a line item, some trust, or a follow-up email. This one costs the visit</strong> — at second twenty, before any of the rest of the flow gets a chance.</p>
+      <p>It is also two small changes: a <code>scrollIntoView</code> on the tile handler, and replacing the reset-to-empty foot with the confirmation-plus-invitation from E1 — which fixes B2 and E1 at the same time, and E1 is the finding that most directly defeats the builder's whole purpose. Runner-up, and it costs one line of copy: rewrite the subhead per C1. Ship both.</p>
+    </div>
+  </section>
+
+  <section class="col">
+    <p class="eyebrow">Considered and rejected</p>
+    <h2>What we deliberately leave alone</h2>
+    <div class="alone">
+      <div>
+        <h3>The absence of pricing</h3>
+        <p>A deliberate decision and the right one for custom print. Nothing above adds a price. Where reviewers reached for cost as a decision aid, it's replaced with a non-price differentiator. The two pricing-adjacent findings kept — C4 and F2 — both work without disclosing a figure.</p>
+      </div>
+      <div>
+        <h3>The single-product auto-open</h3>
+        <p>One reviewer claimed a lone card sits in a void and wanted the configurator opened as a hero instead. It already does exactly that. The only leftover is the redundant single tile above a configurator repeating the same photo and specs, which E5 removes.</p>
+      </div>
+      <div>
+        <h3>Demoting "Review &amp; continue" while the quote holds one line</h3>
+        <p>Proposed to force multi-line quotes. It punishes visitors who legitimately want one product and makes the primary action's weight depend on invisible state. The competition for attention is solved by giving the configurator something to say (E1), not by muting the rail.</p>
+      </div>
+      <div>
+        <h3>A confirmation dialog on tab switch</h3>
+        <p>Suggested as a guard for D1. A modal would frighten a persona already wary of accidentally buying something, over a page where nothing is a purchase. Preserve the choices instead — which is what the tile handler already does.</p>
+      </div>
+      <div>
+        <h3>The empty configurator slab</h3>
+        <p>Two reviewers wanted it collapsed as dead space. It's the only element on the build screen sized to hold anything, and the persona's biggest unanswered questions — what a case is, that 1,000 is the floor and it's per size, that the proof is free — have nowhere else to live. Fill it, don't delete it.</p>
+      </div>
+      <div>
+        <h3>Duplicate quote lines from double-tapping Add</h3>
+        <p>Two reviewers predicted them. The quote matches on product <em>and</em> size, so re-opening a size already on the quote yields the Add/Update pair, never a second line. The real defect there is D4, not duplication — worth saying because it changes what needs fixing.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Hot Cup Factory · custom quote builder · UX audit round 3 · 7 lenses, 96 raw findings, 36 after merging, 6 of 6 independently verified · measurements taken in Chromium at 360–1440px
+  </footer>
+</div>

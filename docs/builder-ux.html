@@ -1,0 +1,1085 @@
+<title>Custom Builder UX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+  :root {
+    --ground: #EEF0EC;
+    --surface: #F8F9F7;
+    --surface-2: #E4E7E2;
+    --ink: #161A17;
+    --ink-2: #454C48;
+    --muted: #737B76;
+    --line: #CFD5CF;
+    --line-2: #B9C1BA;
+    --accent: #0E5C48;
+    --accent-soft: #D9E7E1;
+    --signal: #9E2B42;
+
+    /* wireframe greys — deliberately hueless-ish, no accent allowed inside */
+    --wf-bg: #FFFFFF;
+    --wf-panel: #F1F2F1;
+    --wf-line: #D6D9D6;
+    --wf-line-2: #B7BCB8;
+    --wf-fill: #E2E5E2;
+    --wf-ink: #2E3330;
+    --wf-mute: #7C837E;
+    --wf-on: #2E3330;
+    --wf-on-ink: #FFFFFF;
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --ui: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --col: 60rem;
+    --wide: 76rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #121614;
+      --surface: #1A1F1C;
+      --surface-2: #232926;
+      --ink: #E6EAE6;
+      --ink-2: #B4BCB7;
+      --muted: #8B948E;
+      --line: #2E3531;
+      --line-2: #3B433E;
+      --accent: #56BE9C;
+      --accent-soft: #17332B;
+      --signal: #E8788D;
+
+      --wf-bg: #1E2320;
+      --wf-panel: #262C29;
+      --wf-line: #363D39;
+      --wf-line-2: #4A524D;
+      --wf-fill: #2F3633;
+      --wf-ink: #DCE1DD;
+      --wf-mute: #8A928C;
+      --wf-on: #DCE1DD;
+      --wf-on-ink: #1E2320;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #121614;
+    --surface: #1A1F1C;
+    --surface-2: #232926;
+    --ink: #E6EAE6;
+    --ink-2: #B4BCB7;
+    --muted: #8B948E;
+    --line: #2E3531;
+    --line-2: #3B433E;
+    --accent: #56BE9C;
+    --accent-soft: #17332B;
+    --signal: #E8788D;
+
+    --wf-bg: #1E2320;
+    --wf-panel: #262C29;
+    --wf-line: #363D39;
+    --wf-line-2: #4A524D;
+    --wf-fill: #2F3633;
+    --wf-ink: #DCE1DD;
+    --wf-mute: #8A928C;
+    --wf-on: #DCE1DD;
+    --wf-on-ink: #1E2320;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    margin: 0;
+    padding: 0 1.5rem 8rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  .masthead {
+    max-width: var(--col);
+    margin: 0 auto;
+    padding: 5rem 0 2.5rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1.5rem;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 7vw, 4.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.032em;
+    text-wrap: balance;
+    margin: 0 0 1.25rem;
+  }
+
+  .standfirst {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 46ch;
+    margin: 0 0 2.5rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .meta b { color: var(--ink-2); font-weight: 500; }
+
+  section { max-width: var(--col); margin: 0 auto; padding-top: 4.5rem; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3.4vw, 2rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0 0 1.25rem;
+  }
+
+  h3 { font-family: var(--display); font-weight: 700; font-size: 1.0625rem; letter-spacing: -0.008em; margin: 0; }
+
+  p { margin: 0 0 1.15rem; max-width: 66ch; }
+  p:last-child { margin-bottom: 0; }
+  .lede { font-size: 1.125rem; color: var(--ink-2); }
+
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  code { font-family: var(--mono); font-size: 0.875em; background: var(--surface-2); padding: 0.08em 0.32em; border-radius: 2px; }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+    display: block;
+  }
+
+  .thesis {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.75rem, 4.6vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+    max-width: 20ch;
+    margin: 0 0 1.5rem;
+  }
+  .thesis span { color: var(--accent); }
+
+  .frame {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    padding: 1.5rem 1.75rem;
+    margin: 1.5rem 0 0;
+  }
+  .frame p { font-size: 1rem; }
+
+  /* ---------- tap budget ---------- */
+
+  .budget { margin-top: 2rem; border-top: 1px solid var(--line); }
+  .budget-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .budget-row .step { font-size: 0.9875rem; color: var(--ink-2); }
+  .budget-row .step b { color: var(--ink); font-weight: 600; }
+  .budget-row .taps { font-family: var(--mono); font-size: 0.8125rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .budget-row.total { border-bottom: 2px solid var(--ink); padding-top: 1.1rem; }
+  .budget-row.total .step { font-family: var(--display); font-weight: 700; font-size: 1.0625rem; color: var(--ink); }
+  .budget-row.total .taps { color: var(--accent); font-weight: 500; font-size: 0.9375rem; }
+
+  /* ---------- plate (wireframe container) ---------- */
+
+  .plate {
+    margin: 2.5rem 0 0;
+    width: min(var(--wide), calc(100vw - 3rem));
+    margin-left: calc((min(var(--col), 100vw - 3rem) - min(var(--wide), 100vw - 3rem)) / 2);
+  }
+
+  .plate-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 1rem;
+  }
+  .plate-head b { color: var(--accent); font-weight: 500; }
+  .plate-head .right { margin-left: auto; text-transform: none; letter-spacing: 0.04em; }
+
+  .plate-caption {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-top: 1rem;
+    max-width: 62ch;
+  }
+
+  /* ================= WIREFRAME ================= */
+
+  .wf {
+    font-family: var(--ui);
+    background: var(--wf-bg);
+    border: 1px solid var(--wf-line-2);
+    color: var(--wf-ink);
+    overflow: hidden;
+  }
+  .wf * { box-sizing: border-box; }
+  .wf button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+
+  .wf-bar {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--wf-line);
+    background: var(--wf-panel);
+    font-size: 0.6875rem;
+    font-family: var(--mono);
+    color: var(--wf-mute);
+    letter-spacing: 0.06em;
+  }
+  .wf-bar .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--wf-line-2); }
+  .wf-bar .tapcount { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--wf-ink); }
+  .wf-bar .tapcount b { font-weight: 500; }
+  .wf-bar .reset { color: var(--wf-mute); text-decoration: underline; text-underline-offset: 2px; }
+
+  .wf-body { display: grid; grid-template-columns: 1fr 16rem; min-height: 30rem; }
+  @media (max-width: 56rem) { .wf-body { grid-template-columns: 1fr; } }
+
+  .wf-main { border-right: 1px solid var(--wf-line); min-width: 0; }
+  @media (max-width: 56rem) { .wf-main { border-right: none; border-bottom: 1px solid var(--wf-line); } }
+
+  /* tabs */
+  .wf-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--wf-line); overflow-x: auto; }
+  .wf-tab {
+    padding: 0.8rem 1.1rem;
+    font-size: 0.8125rem;
+    color: var(--wf-mute);
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .wf-tab[aria-selected="true"] { color: var(--wf-ink); font-weight: 600; border-bottom-color: var(--wf-on); }
+
+  .wf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--wf-line); }
+  @media (max-width: 46rem) { .wf-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .wf-card { background: var(--wf-bg); padding: 0; text-align: left; display: flex; flex-direction: column; width: 100%; }
+  .wf-card:hover .wf-photo { background: var(--wf-line); }
+  .wf-card[aria-expanded="true"] { background: var(--wf-panel); }
+
+  .wf-photo {
+    aspect-ratio: 5 / 4;
+    background: var(--wf-fill);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .wf-photo::after {
+    content: "PHOTO";
+    position: absolute; top: 0.5rem; left: 0.6rem;
+    font-family: var(--mono); font-size: 0.5625rem; letter-spacing: 0.1em;
+    color: var(--wf-mute);
+  }
+  .wf-photo svg { width: 46%; height: auto; }
+  .wf-photo svg .sh { fill: var(--wf-line-2); }
+
+  .wf-cardtext { padding: 0.75rem 0.85rem 0.9rem; }
+  .wf-cardtext .nm { font-size: 0.8125rem; font-weight: 600; line-height: 1.3; margin-bottom: 0.35rem; }
+  .wf-cardtext .sp { font-family: var(--mono); font-size: 0.625rem; color: var(--wf-mute); line-height: 1.6; }
+
+  /* expand panel */
+  .wf-panel { grid-column: 1 / -1; background: var(--wf-panel); padding: 1.25rem 1.1rem 1.35rem; border-top: 1px solid var(--wf-line); }
+  .wf-panel .lab {
+    font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.11em; text-transform: uppercase;
+    color: var(--wf-mute); margin-bottom: 0.6rem;
+  }
+  .wf-panel .grp + .grp { margin-top: 1.25rem; }
+
+  .wf-sizes { display: flex; align-items: flex-end; gap: 0.5rem; flex-wrap: wrap; }
+  .wf-size {
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    padding: 0.5rem 0.55rem 0.45rem;
+    border: 1px solid var(--wf-line-2);
+    background: var(--wf-bg);
+    min-width: 4.1rem;
+  }
+  .wf-size svg { display: block; }
+  .wf-size svg .sh { fill: var(--wf-line-2); }
+  .wf-size .oz { font-size: 0.6875rem; font-family: var(--mono); color: var(--wf-mute); }
+  .wf-size[aria-pressed="true"] { background: var(--wf-on); border-color: var(--wf-on); }
+  .wf-size[aria-pressed="true"] .oz { color: var(--wf-on-ink); }
+  .wf-size[aria-pressed="true"] svg .sh { fill: var(--wf-on-ink); }
+
+  .wf-qtys { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .wf-qty {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--wf-line-2);
+    background: var(--wf-bg);
+    text-align: center;
+    min-width: 5.2rem;
+  }
+  .wf-qty .n { display: block; font-size: 0.8125rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .wf-qty .s { display: block; font-family: var(--mono); font-size: 0.5625rem; letter-spacing: 0.04em; color: var(--wf-mute); margin-top: 0.15rem; }
+  .wf-qty[aria-pressed="true"] { background: var(--wf-on); border-color: var(--wf-on); color: var(--wf-on-ink); }
+  .wf-qty[aria-pressed="true"] .s { color: var(--wf-on-ink); opacity: 0.75; }
+
+  .wf-panelfoot { display: flex; align-items: center; gap: 1rem; margin-top: 1.35rem; flex-wrap: wrap; }
+  .wf-add {
+    padding: 0.6rem 1.2rem;
+    background: var(--wf-on); color: var(--wf-on-ink);
+    font-size: 0.8125rem; font-weight: 600;
+  }
+  .wf-add[disabled] { background: var(--wf-fill); color: var(--wf-mute); cursor: not-allowed; }
+  .wf-under { font-size: 0.75rem; color: var(--wf-mute); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* summary rail */
+  .wf-rail { display: flex; flex-direction: column; background: var(--wf-bg); }
+  .wf-railhead {
+    padding: 0.8rem 0.9rem;
+    border-bottom: 1px solid var(--wf-line);
+    font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.11em; text-transform: uppercase; color: var(--wf-mute);
+  }
+  .wf-lines { flex: 1; padding: 0.5rem 0; overflow-y: auto; max-height: 22rem; }
+  .wf-empty { padding: 1.4rem 0.9rem; font-size: 0.75rem; color: var(--wf-mute); line-height: 1.6; }
+  .wf-line { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--wf-line); align-items: start; }
+  .wf-line .t { font-size: 0.75rem; line-height: 1.35; }
+  .wf-line .q { font-family: var(--mono); font-size: 0.6875rem; color: var(--wf-mute); font-variant-numeric: tabular-nums; margin-top: 0.15rem; }
+  .wf-line .x { font-size: 0.9rem; color: var(--wf-mute); line-height: 1; padding: 0.15rem 0.2rem; }
+  .wf-railfoot { border-top: 1px solid var(--wf-line); padding: 0.85rem 0.9rem; background: var(--wf-panel); }
+  .wf-tot { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.6875rem; color: var(--wf-mute); margin-bottom: 0.7rem; font-variant-numeric: tabular-nums; }
+  .wf-tot b { color: var(--wf-ink); font-weight: 500; }
+  .wf-next { display: block; width: 100%; padding: 0.65rem; background: var(--wf-on); color: var(--wf-on-ink); font-size: 0.8125rem; font-weight: 600; text-align: center; }
+  .wf-next[disabled] { background: var(--wf-fill); color: var(--wf-mute); cursor: not-allowed; }
+  .wf-assure { margin: 0.6rem 0 0; font-size: 0.6875rem; line-height: 1.45; color: var(--wf-mute); text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) { .wf-photo { transition: none; } }
+
+  /* ---------- B3 chips wireframe ---------- */
+
+  .wf-q { padding: 1.35rem 1.25rem; border-bottom: 1px solid var(--wf-line); }
+  .wf-q:last-child { border-bottom: none; }
+  .wf-q .qt { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .wf-q .qh { font-size: 0.75rem; color: var(--wf-mute); margin-bottom: 0.8rem; }
+  .wf-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+  .wf-chip { padding: 0.5rem 0.9rem; border: 1px solid var(--wf-line-2); background: var(--wf-bg); font-size: 0.8125rem; }
+  .wf-chip[aria-pressed="true"] { background: var(--wf-on); border-color: var(--wf-on); color: var(--wf-on-ink); }
+  .wf-chip.wide { display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; text-align: left; min-width: 11rem; padding: 0.7rem 0.9rem; }
+  .wf-chip.wide .sub { font-family: var(--mono); font-size: 0.5625rem; color: var(--wf-mute); letter-spacing: 0.03em; }
+  .wf-chip.wide[aria-pressed="true"] .sub { color: var(--wf-on-ink); opacity: 0.75; }
+
+  /* ---------- mechanisms ---------- */
+
+  .mechs { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 2rem; }
+  .mech { background: var(--surface); padding: 1.6rem 1.75rem; display: grid; grid-template-columns: 2.5rem 1fr; gap: 1.25rem; }
+  .mech .mn { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); padding-top: 0.28rem; }
+  .mech h3 { margin-bottom: 0.5rem; }
+  .mech p { font-size: 0.9875rem; color: var(--ink-2); margin-bottom: 0; max-width: 62ch; }
+  .mech p + p { margin-top: 0.7rem; }
+  @media (max-width: 40rem) { .mech { grid-template-columns: 1fr; gap: 0.5rem; } }
+
+  .scroller { overflow-x: auto; }
+
+  .vocab { width: 100%; border-collapse: collapse; margin-top: 1.75rem; font-size: 0.9375rem; min-width: 34rem; }
+  .vocab th {
+    font-family: var(--mono); font-size: 0.625rem; letter-spacing: 0.11em; text-transform: uppercase;
+    color: var(--muted); text-align: left; font-weight: 500;
+    padding: 0 1.5rem 0.6rem 0; border-bottom: 1px solid var(--line);
+  }
+  .vocab td { padding: 0.7rem 1.5rem 0.7rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .vocab td:last-child, .vocab th:last-child { padding-right: 0; }
+  .vocab .where { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+  .vocab .no { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--signal); text-decoration-thickness: 1px; }
+  .vocab .yes { color: var(--ink); font-weight: 600; }
+
+  .flag {
+    display: inline-block;
+    font-family: var(--mono); font-size: 0.5625rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--signal); border: 1px solid var(--signal);
+    padding: 0.1rem 0.35rem; margin-left: 0.5rem; vertical-align: 0.15em;
+  }
+
+  .needs { list-style: none; padding: 0; margin: 2rem 0 0; border-top: 1px solid var(--line); }
+  .needs li { border-bottom: 1px solid var(--line); padding: 1.15rem 0; display: grid; grid-template-columns: 2rem 1fr; gap: 1rem; }
+  .needs .n { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); padding-top: 0.2rem; }
+  .needs b { display: block; font-family: var(--display); font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+  .needs span.d { font-size: 0.9375rem; color: var(--ink-2); }
+
+  .closer {
+    max-width: var(--col);
+    margin: 5rem auto 0;
+    padding-top: 2.5rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+</style>
+
+<header class="masthead">
+  <p class="eyebrow">Stage 2 of 4 &nbsp;·&nbsp; Interaction design</p>
+  <h1>Custom Builder UX</h1>
+  <p class="standfirst">How the builder actually behaves — the interaction model that makes speccing a custom order feel like browsing instead of filling in a form.</p>
+  <div class="meta">
+    <div><b>Hot Cup Factory</b> — custom collections</div>
+    <div>20 Aug 2026</div>
+    <div>Grey-box · unbranded on purpose</div>
+  </div>
+</header>
+
+<section>
+  <span class="kicker">The thesis</span>
+  <p class="thesis">Two minutes.<br><span>Zero typing</span> until the very end.</p>
+  <p class="lede">Every choice in the builder is a tap on something visual — a photograph, a cup silhouette, a volume chip. The keyboard doesn't appear until screen four, where we ask for a name and an email, and by then the customer has built something they don't want to abandon.</p>
+  <p>This is the whole design in one sentence, and it's a useful test to hold everything against. Any time a screen wants a text field, that's a signal we're asking the customer to do work the interface should be doing for them. A buyer who types "about 5,000 twelve ounce cups, maybe some lids too" into a box has given us a paragraph to interpret. A buyer who taps three things has given us a spec.</p>
+
+  <div class="frame">
+    <p><strong>Why this matters more than it sounds.</strong> Your customers are café owners and operations managers browsing on a phone between other jobs. They are not going to compose prose about their packaging needs. Every text field you remove is a conversion point — and every tap you replace it with produces cleaner data than the sentence would have.</p>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">The constraint</span>
+  <h2>A tap budget, not a vibe</h2>
+  <p>"Quick" is worth nothing as an aspiration and everything as a number. Here's the target for the most common order in your catalog — one product, one size, one quantity, from landing on the collection page to a submitted spec.</p>
+
+  <div class="budget">
+    <div class="budget-row"><span class="step"><b>Start a custom quote</b> — the door</span><span class="taps">1 tap</span></div>
+    <div class="budget-row"><span class="step">Open a product card</span><span class="taps">1 tap</span></div>
+    <div class="budget-row"><span class="step">Choose a size</span><span class="taps">1 tap</span></div>
+    <div class="budget-row"><span class="step">Choose a quantity</span><span class="taps">1 tap</span></div>
+    <div class="budget-row"><span class="step">Add to my quote</span><span class="taps">1 tap</span></div>
+    <div class="budget-row"><span class="step">Review request &rarr; continue</span><span class="taps">1 tap</span></div>
+    <div class="budget-row"><span class="step">Four project questions, all chips</span><span class="taps">4 taps</span></div>
+    <div class="budget-row"><span class="step">Continue to contact</span><span class="taps">1 tap</span></div>
+    <div class="budget-row"><span class="step">Four fields &mdash; the only typing in the flow</span><span class="taps">4 fields</span></div>
+    <div class="budget-row"><span class="step">Submit</span><span class="taps">1 tap</span></div>
+    <div class="budget-row total"><span class="step">Complete spec</span><span class="taps">12 taps + 4 fields</span></div>
+  </div>
+
+  <p style="margin-top:1.75rem">Twelve taps is the budget — dropping the artwork question bought one back. Any feature that pushes it past about fifteen needs to earn its place by producing information the sales team will genuinely act on, and most won't. This is the number I'd hold the design to as it grows.</p>
+</section>
+
+<section>
+  <span class="kicker">The rule</span>
+  <h2>Nothing in here says buy</h2>
+  <p class="lede">The builder has a shape borrowed from e-commerce — a grid, a running list, a continue button — and that shape is worth keeping, because it's the clearest way to show progress accumulating. But the <em>words</em> have to work against it, hard, on every single screen.</p>
+  <p>If a customer thinks they're building a cart, one of two bad things happens. Either the commitment feels too heavy for a first enquiry and they leave, or they finish expecting a checkout, don't get one, and feel misled at exactly the moment you wanted them to feel looked after. Both are avoidable with vocabulary.</p>
+  <p>Your site already has the right language and uses it well — <strong>Get a custom quote</strong> in the header, <strong>Request a Quote</strong> as step one of the published process. The builder should sound like the thing your customers were already promised, so the whole interface adopts it.</p>
+
+  <div class="scroller">
+    <table class="vocab">
+      <thead>
+        <tr><th scope="col">Where</th><th scope="col">Never</th><th scope="col">Instead</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="where">Collection page CTA</td><td class="no">Build your custom order</td><td class="yes">Start a custom quote</td></tr>
+        <tr><td class="where">Product panel button</td><td class="no">Add to order</td><td class="yes">Add to my quote</td></tr>
+        <tr><td class="where">Summary rail heading</td><td class="no">Your order</td><td class="yes">Your quote request</td></tr>
+        <tr><td class="where">Rail footer button</td><td class="no">Review order · Checkout</td><td class="yes">Review &amp; continue</td></tr>
+        <tr><td class="where">Screen B2 title</td><td class="no">Review your order</td><td class="yes">Review your request</td></tr>
+        <tr><td class="where">Final button, B4</td><td class="no">Place order · Submit</td><td class="yes">Send my request</td></tr>
+        <tr><td class="where">Anywhere at all</td><td class="no">Cart · Checkout · Buy · Total</td><td class="yes">Quote · Request · Units</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="frame">
+    <p><strong>And one line does most of the work.</strong> Under the continue button, permanently visible: <em>"No payment — we price this and get back to you."</em> It answers the only question a hesitant customer is actually asking, at the exact moment they're asking it. Every quote builder that fails to say this plainly leaks people at the final step.</p>
+  </div>
+
+  <p style="margin-top:1.5rem">Two supporting details, both already true of this design and worth keeping true: <strong>no prices appear anywhere</strong>, which removes the strongest purchase cue an interface can carry, and <strong>there is no subtotal row</strong> — the rail counts products and units, never money.</p>
+</section>
+
+<section>
+  <span class="kicker">Screen B1</span>
+  <h2>The screen that has to be good</h2>
+  <p>Everything else in the flow is short. This one is where the customer spends their time, learns what you make, and either builds a real order or gives up. It's built as a live wireframe below — <strong>click through it.</strong> The tap counter in the top bar keeps you honest about the budget.</p>
+  <p>Grey boxes on purpose. Photography, type, and brand colour all land at stage 3; if this reads well as grey boxes, it will read beautifully branded, and if it doesn't, no amount of styling will save it.</p>
+
+  <div class="plate">
+    <div class="plate-head">
+      <b>Plate 01</b>
+      <span>B1 — Pick products · desktop</span>
+      <span class="right">Interactive — try it</span>
+    </div>
+
+    <div class="wf">
+      <div class="wf-bar">
+        <span class="dot"></span>
+        <span>hotcupfactory.com / custom / build</span>
+        <span class="tapcount">TAPS: <b id="tapn">0</b> &nbsp;·&nbsp; <button class="reset" id="reset">reset</button></span>
+      </div>
+
+      <div class="wf-body">
+        <div class="wf-main">
+          <div class="wf-tabs" role="tablist" id="tabs"></div>
+          <div class="wf-grid" id="grid"></div>
+        </div>
+
+        <aside class="wf-rail">
+          <div class="wf-railhead">Your quote request</div>
+          <div class="wf-lines" id="lines"></div>
+          <div class="wf-railfoot">
+            <div class="wf-tot"><span>Products</span><b id="tp">0</b></div>
+            <div class="wf-tot"><span>Total units</span><b id="tu">0</b></div>
+            <button class="wf-next" id="next" disabled>Review &amp; continue</button>
+            <p class="wf-assure">No payment — we price this and get back to you.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <p class="plate-caption">Your five real categories. Five is a comfortable tab row at any width — the navigation question is settled, and B1 needs no fallback pattern. Products, minimums, case sizes, and lead times underneath are still placeholders.</p>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">The moves</span>
+  <h2>Nine decisions that make it fast</h2>
+  <p>Each of these is a specific choice, and most of them have a worse obvious alternative that a lot of B2B configurators pick.</p>
+
+  <div class="mechs">
+
+    <article class="mech">
+      <span class="mn">01</span>
+      <div>
+        <h3>Volume chips, not a number input</h3>
+        <p>The single most important interaction in the builder. A free number field means typing on a phone, an invisible minimum, and a validation error after the fact. A stepper means tapping plus forty-nine times to reach 5,000.</p>
+        <p>Preset chips solve all three at once: one tap, no keyboard, and the minimum is simply the first chip rather than a rule you discover by breaking it. It also matches how buyers actually think — in tiers and cases, not exact unit counts. <em>Custom</em> stays available for the buyer who genuinely needs 7,200.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">02</span>
+      <div>
+        <h3>The chips speak in cases</h3>
+        <p>With pricing off, the chips still have to teach something, and cases are the honest answer. Your product pages already talk this way — <em>1,000 cups per case</em> — and cases are how the order actually arrives on a loading dock. So each chip shows both: <code>3,000</code> above, <code>3 cases</code> below.</p>
+        <p>Every tier is deliberately a whole number of cases. A customer never picks a quantity that turns into two and a half boxes, which is the kind of small correctness that makes a tool feel like it was built by people who know the product.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">03</span>
+      <div>
+        <h3>Sizes shown at true relative scale</h3>
+        <p>Cup sizes are physical objects, so draw them as physical objects. The silhouettes in the size picker are proportioned to the real cups — an 8 oz really is about 60% the height of a 20 oz.</p>
+        <p>A buyer who isn't fluent in ounces can pick by eye in a way a row of text labels never allows. This is the clearest example of "visual and informative" in the whole build, and it's specific to what you sell — it wouldn't work for a company selling software.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">04</span>
+      <div>
+        <h3>Nothing navigates away</h3>
+        <p>Opening a product expands a panel in place. No modal, no new page, no back button. The grid stays where it was, the summary stays visible, and the scroll position never jumps.</p>
+        <p>The failure mode this avoids is the one that kills most catalog flows: tap a product, land on a detail page, hit back, lose your place, give up. Inline expansion means browsing four products costs four taps and no disorientation.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">05</span>
+      <div>
+        <h3>The minimum is a floor that can't be crossed</h3>
+        <p>You ruled that sub-minimum quantities shouldn't be possible, and the chip design delivers that for free: the lowest chip <em>is</em> the minimum, and <em>Custom</em> is floored at the same number. An invalid order is unconstructible, so no validation message ever has to fire.</p>
+        <p>Worth naming the trade you've made. A café wanting 250 printed cups now has no path forward inside the builder — they'll land on <em>talk to us</em> instead. That's the right call if those enquiries mostly waste your reps' time, and the wrong one if some meaningful share of them grow into real orders once a person is on the phone. The escape hatch catches them either way; they just aren't invited in.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">06</span>
+      <div>
+        <h3>Progress is always visible</h3>
+        <p>The running order sits in a rail on desktop and a sticky bar on mobile — never behind a cart icon with a badge. Seeing the list build is what motivates finishing it, and hiding it behind a tap costs you exactly the customers who were on the fence.</p>
+        <p>It's also the quiet mechanism for multi-category orders: a visible list with room in it invites another line far more effectively than a prompt would.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">07</span>
+      <div>
+        <h3>Only decision-critical specs on the card face</h3>
+        <p>Minimum and lead time go on the card, because they're the two facts that eliminate products. Material, wall construction, certifications, and print method live behind a <em>Full specs</em> toggle in the expanded panel.</p>
+        <p>The customer choosing between three cup types needs two numbers, not two paragraphs. The detail is there for the buyer who wants it — it just doesn't tax the eleven who don't.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">08</span>
+      <div>
+        <h3>The tabs never lock</h3>
+        <p>Arriving from the sleeve collection pre-selects the sleeve tab. It doesn't hide the others, and the tab row is the first thing on the screen — your call, and the right one.</p>
+        <p>This is the revenue argument for the entire project. Today a sleeve enquiry is structurally incapable of becoming a sleeve-and-cup enquiry, because the form only knows about sleeves. One tab row fixes that. With five categories the whole range is visible at once without a single scroll.</p>
+      </div>
+    </article>
+
+    <article class="mech">
+      <span class="mn">09</span>
+      <div>
+        <h3>Every dead end has a door</h3>
+        <p>Empty categories, no matches, below minimum, product we don't make — each of those states carries an action rather than a message. Usually <em>talk to us</em>, occasionally a stock alternative, never a shrug.</p>
+        <p>An escape hatch that captures where the customer was standing when they used it is worth more than a perfect flow, because it tells you what to build next.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Screen B3</span>
+  <h2>Four questions, still no keyboard</h2>
+  <p>This is where the flow is most at risk of turning back into the form we're replacing. Four open text fields would undo all of it. So every answer is a chip or a card — and because the options are fixed, the sales team gets clean, sortable values instead of free text they have to read.</p>
+  <p>Only the in-hands date is required. The other three improve the quote without gating it.</p>
+
+  <div class="frame">
+    <p><strong>I read "no artwork" as dropping the question entirely, not just the file upload.<span class="flag">Check me</span></strong> Your own site is the argument for it: design proofs are free, they happen at step two <em>after</em> the quote, and the mockup offer is unconditional. If artwork support costs the customer nothing either way, knowing their artwork status doesn't change the quote — so the question is a tap that buys nothing. Say the word and I'll put it back as a three-card row.</p>
+  </div>
+
+  <div class="plate">
+    <div class="plate-head">
+      <b>Plate 02</b>
+      <span>B3 — Project details</span>
+      <span class="right">Interactive — try it</span>
+    </div>
+
+    <div class="wf">
+      <div class="wf-bar"><span class="dot"></span><span>hotcupfactory.com / custom / build / details</span></div>
+      <div id="q3"></div>
+    </div>
+
+    <p class="plate-caption">Answers double as routing logic. "Recurring" can go straight to whoever handles contract accounts; "2–3 weeks" can flag a rush before anyone reads the record.</p>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Mobile</span>
+  <h2>Where this actually gets used</h2>
+  <p>Assume most of your custom traffic is on a phone, and design B1 for that first. Three changes, none of them structural:</p>
+
+  <div class="mechs">
+    <article class="mech">
+      <span class="mn">—</span>
+      <div>
+        <h3>The rail becomes a sticky bottom bar</h3>
+        <p>Collapsed it reads <em>2 products · 7,500 units</em> with a continue button. Tapping it raises a sheet with the full list. Progress stays visible, which is the property that matters — it just uses the one piece of screen furniture phones handle well.</p>
+      </div>
+    </article>
+    <article class="mech">
+      <span class="mn">—</span>
+      <div>
+        <h3>Two-up grid, and the tabs scroll</h3>
+        <p>Product cards stay photo-led at two across — one across wastes the screen and makes the catalog feel smaller than it is. The tab row scrolls horizontally and sticks to the top as the grid moves under it.</p>
+      </div>
+    </article>
+    <article class="mech">
+      <span class="mn">—</span>
+      <div>
+        <h3>The expanded panel is unchanged</h3>
+        <p>Silhouettes and chips are already touch targets at a comfortable size, so the panel needs no mobile variant at all. That's the payoff for choosing chips over number inputs — the interaction was built for thumbs from the start.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Site continuity</span>
+  <h2>Three things the live site already gives us</h2>
+  <p>The screenshots changed my thinking in a few places. The builder shouldn't arrive as a novelty — it should slot into a story your site already tells well.</p>
+
+  <div class="mechs">
+    <article class="mech">
+      <span class="mn">—</span>
+      <div>
+        <h3>The builder <em>is</em> step one</h3>
+        <p>You already publish a three-step promise: <strong>Request a Quote → Custom Design Proof → We Print &amp; Ship</strong>. The builder isn't a new process, it's a better version of step one — so the confirmation screen should show that same three-step graphic with step one marked done.</p>
+        <p>That's a free and very effective "what happens next", because it's the sequence the customer already read on the way in.</p>
+      </div>
+    </article>
+    <article class="mech">
+      <span class="mn">—</span>
+      <div>
+        <h3>The sample box belongs on the confirmation screen</h3>
+        <p>"Specs on a screen only tell you so much" is your own copy, and it's exactly right about a builder made of silhouettes and chips. Someone who has just specced 5,000 cups is the single best candidate for a free sample box you already offer.</p>
+        <p>One button on B5. It costs nothing, it fills the wait before a rep calls, and it puts your product in the hands of a lead at their moment of highest intent.</p>
+      </div>
+    </article>
+    <article class="mech">
+      <span class="mn">—</span>
+      <div>
+        <h3>"Get a custom quote" is already in your header</h3>
+        <p>That button exists on every page and currently goes to a form. Pointing it at the builder gives the new experience site-wide reach without designing a single new entry point.</p>
+        <p>Worth deciding deliberately though — it's a bigger behavioural change than swapping the module on five collection pages, and it's the one that will move the numbers most.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <span class="kicker">Next</span>
+  <h2>Where this stands</h2>
+  <p>All six decisions from stage 1 are now closed: <strong>no pricing</strong>, <strong>hard minimums</strong>, <strong>email late at B4</strong>, <strong>no artwork step</strong>, <strong>categories pre-select but never lock</strong>, and <strong>five categories</strong> — coffee cups, PET, cold paper cups, sleeves, mason jars. Plus one more, added since: <strong>quote vocabulary throughout, never cart vocabulary</strong>. All of it is reflected above.</p>
+
+  <ul class="needs">
+    <li>
+      <span class="n">01</span>
+      <span class="d"><b>Click through Plate 01 and watch the counter</b>The most useful feedback available right now. Build a two-product order and see where the number lands — if that felt slow, something above is wrong and I'd rather fix it in grey boxes.</span>
+    </li>
+    <li>
+      <span class="n">02</span>
+      <span class="d"><b>Confirm the artwork reading</b>I dropped the question entirely rather than just the upload. One word puts it back.</span>
+    </li>
+    <li>
+      <span class="n">03</span>
+      <span class="d"><b>Orange or ink for the primary button?</b>Your design system says ink-solid is the primary. Your live site uses Roasted orange for every primary CTA. I need to know which governs before stage 3 — they produce genuinely different-feeling screens.</span>
+    </li>
+    <li>
+      <span class="n">04</span>
+      <span class="d"><b>Real minimums, case sizes, and lead times</b>Whenever you have them. The numbers above are invented, and they're the one thing in the builder a customer could be misled by.</span>
+    </li>
+  </ul>
+
+  <p style="margin-top:2.5rem">Stage 3 applies the design system to these exact layouts — Fraunces and DM Sans, the black-and-orange-italic headline pairing your site already uses, Iced teal on the cold product tabs and Roasted orange on coffee, one accent per section. Stage 4 wires it end to end so you can click from collection page to confirmation.</p>
+</section>
+
+<div class="closer">
+  Stage 2 of 4 · Interaction design · Hot Cup Factory custom order experience<br>
+  Nothing here is connected to Shopify, HubSpot, or the theme. Products, minimums, lead times, and savings percentages are placeholders.
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var CUP = function (h, w) {
+    var W = 40, H = 66, x = (W - w) / 2, y = H - h, i = w * 0.13;
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" aria-hidden="true">' +
+      '<polygon class="sh" points="' + x + ',' + y + ' ' + (x + w) + ',' + y + ' ' +
+      (x + w - i) + ',' + H + ' ' + (x + i) + ',' + H + '"/></svg>';
+  };
+
+  var JAR = function (h, w) {
+    var W = 40, H = 66, x = (W - w) / 2, y = H - h, ni = w * 0.2, lid = h * 0.09, sh = h * 0.15;
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" aria-hidden="true">' +
+      '<rect class="sh" x="' + (x + ni * 0.55) + '" y="' + y + '" width="' + (w - ni * 1.1) + '" height="' + lid + '" rx="1"/>' +
+      '<polygon class="sh" points="' +
+      (x + ni) + ',' + (y + lid + 1) + ' ' + (x + w - ni) + ',' + (y + lid + 1) + ' ' +
+      (x + w) + ',' + (y + lid + sh) + ' ' + (x + w) + ',' + H + ' ' + x + ',' + H + ' ' +
+      x + ',' + (y + lid + sh) + '"/></svg>';
+  };
+
+  var SHAPES = {
+    cup: CUP(60, 40),
+    pet: CUP(62, 38),
+    jar: JAR(58, 34),
+    sleeve: '<svg viewBox="0 0 40 66" aria-hidden="true"><path class="sh" d="M4,20 L36,20 L32,50 L8,50 Z M11,26 L29,26 L26,44 L14,44 Z" fill-rule="evenodd"/></svg>'
+  };
+
+  function silhouette(shape, h, w) {
+    if (!h) return SHAPES[shape];
+    if (shape === "jar") return JAR(h, w);
+    return CUP(h, w);
+  }
+
+  /* Case sizes and tiers are chosen so every tier is a whole number of cases. */
+  var CATALOG = [
+    { id: "coffee", label: "Coffee Cups", items: [
+      { id: "sw", name: "Single Wall Paper Cup", shape: "cup", moq: 1000, per: 1000, lead: "3–4 weeks",
+        sizes: [["8 oz", 36, 34], ["12 oz", 48, 38], ["16 oz", 58, 39], ["20 oz", 64, 40]],
+        tiers: [1000, 3000, 5000, 10000] },
+      { id: "dw", name: "Double Wall Paper Cup", shape: "cup", moq: 1000, per: 1000, lead: "4 weeks",
+        sizes: [["8 oz", 37, 35], ["12 oz", 49, 39], ["16 oz", 59, 40], ["20 oz", 65, 41]],
+        tiers: [1000, 3000, 5000, 10000] },
+      { id: "rw", name: "Ripple Wall Paper Cup", shape: "cup", moq: 2000, per: 1000, lead: "4–5 weeks",
+        sizes: [["8 oz", 38, 36], ["12 oz", 50, 39], ["16 oz", 60, 41]],
+        tiers: [2000, 4000, 6000, 12000] }
+    ]},
+    { id: "pet", label: "PET Cold Cups", items: [
+      { id: "clear", name: "Clear PET Cold Cup", shape: "pet", moq: 1000, per: 1000, lead: "3–4 weeks",
+        sizes: [["12 oz", 46, 36], ["16 oz", 55, 38], ["20 oz", 62, 40], ["24 oz", 66, 41]],
+        tiers: [1000, 3000, 5000, 10000] },
+      { id: "stadium", name: "PET Stadium Cup", shape: "pet", moq: 2000, per: 1000, lead: "4 weeks",
+        sizes: [["16 oz", 55, 39], ["20 oz", 62, 41], ["24 oz", 66, 42]],
+        tiers: [2000, 4000, 6000, 12000] }
+    ]},
+    { id: "coldpaper", label: "Cold Paper Cups", items: [
+      { id: "cpc", name: "Paper Cold Cup", shape: "cup", moq: 1000, per: 1000, lead: "3–4 weeks",
+        sizes: [["12 oz", 47, 37], ["16 oz", 56, 39], ["22 oz", 65, 41]],
+        tiers: [1000, 3000, 5000, 10000] },
+      { id: "kcc", name: "Kraft Cold Cup", shape: "cup", moq: 1000, per: 1000, lead: "4 weeks",
+        sizes: [["12 oz", 47, 37], ["16 oz", 56, 39]],
+        tiers: [1000, 3000, 5000, 10000] }
+    ]},
+    { id: "sleeves", label: "Sleeves", items: [
+      { id: "kraftsl", name: "Kraft Cup Sleeve", shape: "sleeve", moq: 1000, per: 1000, lead: "2–3 weeks",
+        sizes: [["10/12/16 oz", 0, 0], ["20/24 oz", 0, 0]], tiers: [1000, 3000, 5000, 10000] },
+      { id: "whitesl", name: "White Cup Sleeve", shape: "sleeve", moq: 1000, per: 1000, lead: "2–3 weeks",
+        sizes: [["10/12/16 oz", 0, 0], ["20/24 oz", 0, 0]], tiers: [1000, 3000, 5000, 10000] }
+    ]},
+    { id: "jars", label: "Mason Jars", items: [
+      { id: "jar", name: "Glass Mason Jar", shape: "jar", moq: 600, per: 12, lead: "5–6 weeks",
+        sizes: [["8 oz", 44, 30], ["12 oz", 52, 33], ["16 oz", 60, 35]],
+        tiers: [600, 1200, 3000, 6000] },
+      { id: "jarlid", name: "Mason Jar with Lid", shape: "jar", moq: 600, per: 12, lead: "5–6 weeks",
+        sizes: [["12 oz", 52, 33], ["16 oz", 60, 35]],
+        tiers: [600, 1200, 3000, 6000] }
+    ]}
+  ];
+
+  var state = { tab: "coffee", open: null, size: null, qty: null, order: [], taps: 0 };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var fmt = function (n) { return n.toLocaleString("en-US"); };
+
+  function tap() { state.taps++; $("tapn").textContent = state.taps; }
+
+  function cat() {
+    for (var i = 0; i < CATALOG.length; i++) { if (CATALOG[i].id === state.tab) return CATALOG[i]; }
+    return CATALOG[0];
+  }
+
+  function renderTabs() {
+    var t = $("tabs");
+    t.innerHTML = "";
+    CATALOG.forEach(function (c) {
+      var b = document.createElement("button");
+      b.className = "wf-tab";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", c.id === state.tab ? "true" : "false");
+      b.textContent = c.label;
+      b.onclick = function () {
+        tap();
+        state.tab = c.id; state.open = null; state.size = null; state.qty = null;
+        renderTabs(); renderGrid();
+      };
+      t.appendChild(b);
+    });
+  }
+
+  function sizeBtn(p, s, i) {
+    var b = document.createElement("button");
+    b.className = "wf-size";
+    b.setAttribute("aria-pressed", state.size === i ? "true" : "false");
+    b.innerHTML = silhouette(p.shape, s[1], s[2]) + '<span class="oz">' + s[0] + "</span>";
+    b.onclick = function () { tap(); state.size = i; renderGrid(); };
+    return b;
+  }
+
+  function qtyBtn(p, v, i) {
+    var b = document.createElement("button");
+    b.className = "wf-qty";
+    b.setAttribute("aria-pressed", state.qty === v ? "true" : "false");
+    var cases = v / p.per;
+    b.innerHTML = '<span class="n">' + fmt(v) + "</span>" +
+      '<span class="s">' + fmt(cases) + (cases === 1 ? " case" : " cases") +
+      (i === 0 ? " · min" : "") + "</span>";
+    b.onclick = function () { tap(); state.qty = v; renderGrid(); };
+    return b;
+  }
+
+  function panel(p) {
+    var d = document.createElement("div");
+    d.className = "wf-panel";
+
+    var g1 = document.createElement("div");
+    g1.className = "grp";
+    g1.innerHTML = '<div class="lab">Size</div>';
+    var sz = document.createElement("div");
+    sz.className = "wf-sizes";
+    p.sizes.forEach(function (s, i) { sz.appendChild(sizeBtn(p, s, i)); });
+    g1.appendChild(sz);
+
+    var g2 = document.createElement("div");
+    g2.className = "grp";
+    g2.innerHTML = '<div class="lab">Quantity</div>';
+    var qs = document.createElement("div");
+    qs.className = "wf-qtys";
+    p.tiers.forEach(function (v, i) { qs.appendChild(qtyBtn(p, v, i)); });
+    var cst = document.createElement("button");
+    cst.className = "wf-qty";
+    cst.innerHTML = '<span class="n">Custom</span><span class="s">min ' + fmt(p.moq) + "</span>";
+    cst.onclick = function () { tap(); };
+    qs.appendChild(cst);
+    g2.appendChild(qs);
+
+    var foot = document.createElement("div");
+    foot.className = "wf-panelfoot";
+    var add = document.createElement("button");
+    add.className = "wf-add";
+    add.textContent = "Add to my quote";
+    add.disabled = state.size === null || state.qty === null;
+    add.onclick = function () {
+      tap();
+      var label = p.sizes[state.size][0];
+      var key = p.id + "|" + label;
+      var found = false;
+      for (var i = 0; i < state.order.length; i++) {
+        if (state.order[i].key === key) { state.order[i].qty = state.qty; found = true; }
+      }
+      if (!found) state.order.push({ key: key, name: p.name, size: label, qty: state.qty });
+      state.open = null; state.size = null; state.qty = null;
+      renderGrid(); renderRail();
+    };
+    var note = document.createElement("span");
+    note.className = "wf-under";
+    note.style.textDecoration = "none";
+    note.textContent = "Ships in cases of " + fmt(p.per) + " · lead time " + p.lead;
+    foot.appendChild(add);
+    foot.appendChild(note);
+
+    d.appendChild(g1);
+    d.appendChild(g2);
+    d.appendChild(foot);
+    return d;
+  }
+
+  function renderGrid() {
+    var g = $("grid");
+    g.innerHTML = "";
+    var items = cat().items;
+    var cols = window.matchMedia("(max-width: 46rem)").matches ? 2 : 3;
+
+    items.forEach(function (p, idx) {
+      var b = document.createElement("button");
+      b.className = "wf-card";
+      b.setAttribute("aria-expanded", state.open === p.id ? "true" : "false");
+      b.innerHTML =
+        '<div class="wf-photo">' + SHAPES[p.shape] + "</div>" +
+        '<div class="wf-cardtext"><div class="nm">' + p.name + "</div>" +
+        '<div class="sp">MIN ' + fmt(p.moq) + " &nbsp;·&nbsp; " + p.lead + "</div></div>";
+      b.onclick = function () {
+        tap();
+        if (state.open === p.id) { state.open = null; }
+        else { state.open = p.id; state.size = null; state.qty = null; }
+        renderGrid();
+      };
+      g.appendChild(b);
+
+      var endOfRow = (idx + 1) % cols === 0 || idx === items.length - 1;
+      if (state.open && endOfRow) {
+        var openIdx = -1;
+        for (var i = 0; i < items.length; i++) { if (items[i].id === state.open) openIdx = i; }
+        if (openIdx > -1 && Math.floor(openIdx / cols) === Math.floor(idx / cols)) {
+          g.appendChild(panel(items[openIdx]));
+        }
+      }
+    });
+  }
+
+  function renderRail() {
+    var l = $("lines");
+    l.innerHTML = "";
+    if (!state.order.length) {
+      l.innerHTML = '<div class="wf-empty">Nothing added yet. Pick a product to start your quote request.</div>';
+    } else {
+      state.order.forEach(function (o, i) {
+        var r = document.createElement("div");
+        r.className = "wf-line";
+        r.innerHTML = '<div><div class="t">' + o.size + " " + o.name + '</div><div class="q">' + fmt(o.qty) + " units</div></div>";
+        var x = document.createElement("button");
+        x.className = "x";
+        x.setAttribute("aria-label", "Remove " + o.size + " " + o.name);
+        x.textContent = "×";
+        x.onclick = function () { tap(); state.order.splice(i, 1); renderRail(); };
+        r.appendChild(x);
+        l.appendChild(r);
+      });
+    }
+    var units = 0;
+    state.order.forEach(function (o) { units += o.qty; });
+    $("tp").textContent = state.order.length;
+    $("tu").textContent = fmt(units);
+    $("next").disabled = !state.order.length;
+  }
+
+  $("reset").onclick = function () {
+    state = { tab: "coffee", open: null, size: null, qty: null, order: [], taps: 0 };
+    $("tapn").textContent = "0";
+    renderTabs(); renderGrid(); renderRail();
+  };
+  $("next").onclick = function () { tap(); };
+
+  /* ---- B3 ---- */
+  var QS = [
+    { q: "When do you need them in hand?", h: "Required — tells us straight away whether we can hit your date.",
+      o: ["2–3 weeks", "About a month", "2–3 months", "Just planning ahead"] },
+    { q: "How many colours in the print?", h: "Optional — affects tooling and turnaround.",
+      o: ["1 colour", "2 colours", "3 colours", "4+ / full colour", "Not sure yet"] },
+    { q: "What's it for?", h: "Optional — helps us route you to the right rep.",
+      o: ["Café or coffee shop", "Restaurant", "Event", "Franchise group", "Reselling"] },
+    { q: "One-time or recurring?", h: "Optional — recurring orders get contract pricing.", wide: true,
+      o: [["One-time order", "single run"], ["Recurring", "contract pricing"]] }
+  ];
+
+  function renderQ() {
+    var host = $("q3");
+    QS.forEach(function (item, qi) {
+      var w = document.createElement("div");
+      w.className = "wf-q";
+      w.innerHTML = '<div class="qt">' + item.q + '</div><div class="qh">' + item.h + "</div>";
+      var row = document.createElement("div");
+      row.className = "wf-chips";
+      item.o.forEach(function (opt) {
+        var b = document.createElement("button");
+        b.className = "wf-chip" + (item.wide ? " wide" : "");
+        b.setAttribute("aria-pressed", "false");
+        b.innerHTML = item.wide
+          ? "<span>" + opt[0] + '</span><span class="sub">' + opt[1] + "</span>"
+          : opt;
+        b.onclick = function () {
+          var sibs = row.querySelectorAll(".wf-chip");
+          for (var i = 0; i < sibs.length; i++) { sibs[i].setAttribute("aria-pressed", "false"); }
+          b.setAttribute("aria-pressed", "true");
+        };
+        row.appendChild(b);
+      });
+      w.appendChild(row);
+      host.appendChild(w);
+    });
+  }
+
+  renderTabs();
+  renderGrid();
+  renderRail();
+  renderQ();
+  window.addEventListener("resize", renderGrid);
+})();
+</script>
