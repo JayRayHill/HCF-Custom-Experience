@@ -42,8 +42,8 @@ await page.setViewportSize({width:390,height:844}); await page.waitForTimeout(20
 await page.locator('#qBlock .qitem').first().locator('.chip').first().click(); await page.waitForTimeout(200);
 await page.locator('#toB4').click(); await page.waitForTimeout(300); await sweep('b4');
 await page.setViewportSize({width:390,height:844}); await page.waitForTimeout(200);
-await page.locator('#backToB3').click(); await page.waitForTimeout(200);
-await page.locator('#backToB2').click(); await page.waitForTimeout(200);
-await page.locator('#backToB1').click(); await page.waitForTimeout(300); await sweep('b1');
+await page.locator('#backB3').click(); await page.waitForTimeout(200);
+await page.locator('#backB2').click(); await page.waitForTimeout(200);
+await page.locator('#backB1').click(); await page.waitForTimeout(300); await sweep('b1');
 L('\nERRORS:', errs.length?errs:'none');
 await b.close();

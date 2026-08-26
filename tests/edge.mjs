@@ -28,7 +28,7 @@ await p.locator('.stepper button').last().click(); await p.waitForTimeout(300);
 L('after tapping + :', await p.evaluate(()=>document.querySelector('.rline').innerText.replace(/\s+/g,' ').trim()));
 
 L('\n=== EDGE 3: undo a lid removal ===');
-await p.locator('#backToB1').click(); await p.waitForTimeout(300);
+await p.locator('#backB1').click(); await p.waitForTimeout(300);
 await p.locator('.lidrow input').check(); await p.waitForTimeout(200);
 await p.locator('#toB2').click(); await p.waitForTimeout(300);
 const rms = p.locator('.rm-line');
@@ -39,7 +39,7 @@ await p.locator('#undoBar button').click(); await p.waitForTimeout(300);
 L('lid back?', await p.evaluate(()=>Array.from(document.querySelectorAll('.rline--extra .nm')).map(e=>e.textContent).join('|')||'(none)'));
 
 L('\n=== EDGE 4: added-pill jump to a 2-product category ===');
-await p.locator('#backToB1').click(); await p.waitForTimeout(300);
+await p.locator('#backB1').click(); await p.waitForTimeout(300);
 await p.locator('#tabs .tab',{hasText:'Coffee Cups'}).click(); await p.waitForTimeout(250);
 await p.locator('.tile').nth(1).click(); await p.waitForTimeout(300);
 await p.locator('.sizes button').nth(0).click(); await p.waitForTimeout(150);

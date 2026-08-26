@@ -181,7 +181,14 @@
     padding: var(--sp3) 0; margin-right: var(--sp8);
     font-size: 13px; color: var(--g5); white-space: nowrap;
     border-bottom: 2px solid transparent; margin-bottom: -1px;
+    text-align: left;
   }
+  /* A finished step is a button, because people try to click it. Only the ones
+     behind you are live: a step you have not reached yet has nothing to show. */
+  button.step { transition: color .2s var(--ease); }
+  button.step:hover { color: var(--ink); }
+  button.step:hover .n { background: var(--rd); }
+  button.step .n { transition: background .2s var(--ease); }
   .step .n {
     width: 20px; height: 20px; border-radius: var(--r-pill);
     background: var(--gxl); color: var(--g5);
@@ -614,6 +621,27 @@
 
   .screen-foot { display: flex; gap: var(--sp4); align-items: center; flex-wrap: wrap; margin-top: var(--sp6); }
 
+  /* Back sits above the heading at the left edge of the column, which is where
+     people look for it. Stacked under the primary button it read as a second
+     thing to do rather than the way out, and on a long screen it was a scroll
+     away from where the doubt actually starts. */
+  .backrow { margin: var(--sp5) auto 0; }
+  #s-b2 .backrow { max-width: 52rem; }
+  #s-b3 .backrow { max-width: 48rem; }
+  #s-b4 .backrow { max-width: 44rem; }
+  .backrow + .screen-head { padding-top: var(--sp4); }
+
+  .backlink {
+    display: inline-flex; align-items: center; gap: var(--sp2);
+    padding: var(--sp3) var(--sp3) var(--sp3) 0;
+    font-size: 14px; font-weight: 500; color: var(--g2);
+    border-radius: var(--r-sm);
+    transition: color .2s var(--ease);
+  }
+  .backlink svg { width: 16px; height: 16px; flex: none; transition: transform .2s var(--ease); }
+  .backlink:hover { color: var(--ink); }
+  .backlink:hover svg { transform: translate3d(-3px, 0, 0); }
+
   /* One measure per screen: the intro copy, the content block and the footer
      controls all end on the same line. */
   #s-b2 .body-copy, #s-b2 .review, #s-b2 .screen-foot, #s-b2 .assure { max-width: 52rem; }
@@ -889,6 +917,9 @@
   </section>
 
   <section class="screen container" id="s-b2" hidden>
+    <div class="backrow">
+      <button type="button" class="backlink" id="backB1"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to products</span></button>
+    </div>
     <div class="screen-head">
       <p class="eyebrow">Step 2</p>
       <h1 class="h-section" tabindex="-1">Here's <em>what you picked</em></h1>
@@ -899,12 +930,14 @@
     <p class="undo" id="undoBar" hidden></p>
     <div class="screen-foot">
       <button class="btn btn--primary" id="toB3">Continue to four quick questions</button>
-      <button class="btn btn--quiet" id="backToB1">Add more products</button>
     </div>
     <p class="assure">Then we'll ask where to send the quote. No payment, no obligation.</p>
   </section>
 
   <section class="screen container" id="s-b3" hidden>
+    <div class="backrow">
+      <button type="button" class="backlink" id="backB2"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to your quote</span></button>
+    </div>
     <div class="screen-head">
       <p class="eyebrow">Step 3</p>
       <h1 class="h-section" tabindex="-1">A few <em>quick details</em></h1>
@@ -920,13 +953,15 @@
     </div>
     <div class="screen-foot">
       <button class="btn btn--primary" id="toB4">Continue</button>
-      <button class="btn btn--quiet" id="backToB2">Back</button>
       <p class="gate" id="b3Gate" hidden>Answer the first question to continue.</p>
     </div>
     <p class="assure">No payment, no obligation. The next screen is just where to send your quote.</p>
   </section>
 
   <section class="screen container" id="s-b4" hidden>
+    <div class="backrow">
+      <button type="button" class="backlink" id="backB3"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to the questions</span></button>
+    </div>
     <div class="screen-head">
       <p class="eyebrow">Last step</p>
       <h1 class="h-section" tabindex="-1">Where do we <em>send it?</em></h1>
@@ -940,7 +975,6 @@
       <div class="frow"><label for="f-phone">Phone <span class="opt">Optional</span></label><input id="f-phone" type="tel" autocomplete="tel"><p class="hint">The fastest way to sort out details, if you'd rather talk.</p></div>
       <div class="screen-foot">
         <button class="btn btn--primary btn--lg" type="submit" id="sendBtn">Send my request</button>
-        <button class="btn btn--quiet" type="button" id="backToB3">Back</button>
         <p class="gate" id="formGate" hidden></p>
       </div>
       <p class="assure">We use these to send your quote and nothing else. No marketing emails unless you ask, and we never share your details. No payment now, and no obligation.</p>
@@ -1394,10 +1428,17 @@
     var order = ["b1", "b2", "b3", "b4"];
     var cur = state.screen === "b5" ? 4 : order.indexOf(state.screen);
     STEPS.forEach(function (s, i) {
-      var el = document.createElement("div");
+      var done = i < cur;
+      var el = document.createElement(done ? "button" : "div");
       el.className = "step";
-      el.setAttribute("data-state", i === cur ? "current" : (i < cur ? "done" : "todo"));
-      el.innerHTML = '<span class="n">' + (i < cur ? "✓" : i + 1) + "</span><span>" + s.label + "</span>";
+      el.setAttribute("data-state", i === cur ? "current" : (done ? "done" : "todo"));
+      if (i === cur) el.setAttribute("aria-current", "step");
+      if (done) {
+        el.type = "button";
+        el.setAttribute("aria-label", "Back to step " + (i + 1) + ", " + s.label);
+        el.onclick = function () { goBack(s.id); };
+      }
+      el.innerHTML = '<span class="n">' + (done ? "✓" : i + 1) + "</span><span>" + s.label + "</span>";
       rail.appendChild(el);
     });
     /* On a phone "Contact" used to sit past the right edge — so the one fact
@@ -1418,6 +1459,31 @@
     bar.classList.toggle("on", !bar.hidden);
   }
 
+  /* Mirrors the history entries this page owns, one per screen pushed. Every
+     in-page Back used to call show(), which pushed a NEW entry, so after two
+     presses the browser's own Back button went forwards and the two controls
+     disagreed. Popping the real stack keeps them saying the same thing. */
+  var trail = [];   /* screen id at each history depth we own */
+  var depth = 0;    /* where in it we currently stand */
+
+  /* Each screen is rebuilt on arrival: handlers inside these renders close over
+     the state they were built with, and a stale one writes old values back. */
+  function enter(id) {
+    if (id === "b1") { renderTiles(); renderConfig(); renderRail(); }
+    if (id === "b2") renderReview();
+    if (id === "b3") { renderQs(); syncB3(); }
+  }
+
+  /* Walk back to a screen already behind us instead of stacking another entry
+     on top. A restored session has nothing behind it, so that falls forward. */
+  function goBack(target) {
+    for (var i = depth - 1; i >= 0; i--) {
+      if (trail[i] === target) { window.history.go(i - depth); return; }
+    }
+    enter(target);
+    show(target);
+  }
+
   /* `push` is false when the move came FROM history (popstate) or from the
      initial render — pushing there would fight the browser. */
   function show(id, push) {
@@ -1434,7 +1500,11 @@
     window.scrollTo(0, 0);
 
     if (push !== false) {
-      try { window.history.pushState({ screen: id }, "", "#" + id); } catch (e) {}
+      /* A push drops whatever was ahead of here, exactly as real history does. */
+      depth += 1;
+      trail.length = depth;
+      trail[depth] = id;
+      try { window.history.pushState({ screen: id, i: depth }, "", "#" + id); } catch (e) {}
     }
     if (id !== "b5") saveState();
 
@@ -1465,15 +1535,12 @@
     /* If a precondition sent us somewhere other than the entry we landed on,
        rewrite that entry. Otherwise the URL names a screen that is not on
        screen and the next Back press looks like it did nothing. */
+    depth = (e.state && typeof e.state.i === "number") ? e.state.i : 0;
+    trail[depth] = id;
     if (id !== want) {
-      try { window.history.replaceState({ screen: id }, "", "#" + id); } catch (e2) {}
+      try { window.history.replaceState({ screen: id, i: depth }, "", "#" + id); } catch (e2) {}
     }
-    /* Every screen is rebuilt on arrival: the handlers inside these renders
-       close over the state they were built with, and a stale one can write
-       yesterday's values back into the quote. */
-    if (id === "b1") { renderTiles(); renderConfig(); renderRail(); }
-    if (id === "b2") renderReview();
-    if (id === "b3") { renderQs(); syncB3(); }
+    enter(id);
     show(id, false);
   });
 
@@ -2359,14 +2426,14 @@
 
   $("#toB2").onclick = function () { renderReview(); show("b2"); };
   $("#moNext").onclick = function () { renderReview(); show("b2"); };
-  $("#backToB1").onclick = function () { renderTiles(true); renderConfig(); renderRail(); show("b1"); };
+  $("#backB1").onclick = function () { goBack("b1"); };
+  $("#backB2").onclick = function () { goBack("b2"); };
+  $("#backB3").onclick = function () { goBack("b3"); };
   $("#toB3").onclick = function () { renderQs(); syncB3(); show("b3"); };
-  $("#backToB2").onclick = function () { renderReview(); show("b2"); };
   $("#toB4").onclick = function () {
     if (!state.answers.when) { b3Blocked(); return; }
     show("b4");
   };
-  $("#backToB3").onclick = function () { show("b3"); };
   /* The old failure path set the border to var(--rm) — the brand orange, the
      same colour as the button just pressed — and said nothing. It read as a
      highlight, so the form looked broken at the moment it mattered most. */
@@ -2676,7 +2743,9 @@
 
   /* Seed history so the first Back has somewhere to go, then render the
      screen we resolved to without pushing a second entry for it. */
-  try { window.history.replaceState({ screen: state.screen }, "", "#" + state.screen); } catch (e) {}
+  trail = [state.screen];
+  depth = 0;
+  try { window.history.replaceState({ screen: state.screen, i: 0 }, "", "#" + state.screen); } catch (e) {}
   show(state.screen, false);
 })();
 </script>

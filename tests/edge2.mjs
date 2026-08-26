@@ -20,7 +20,7 @@ await p.locator('#toB2').click(); await p.waitForTimeout(350);
 L('review extras:', await p.evaluate(()=>Array.from(document.querySelectorAll('.rline--extra .nm')).map(e=>e.textContent).join('|')||'(none — correct)'));
 
 L('\n--- now add the cup too: the lid should reappear ---');
-await p.locator('#backToB1').click(); await p.waitForTimeout(300);
+await p.locator('#backB1').click(); await p.waitForTimeout(300);
 await p.locator('#tabs .tab',{hasText:'Coffee Cups'}).click(); await p.waitForTimeout(300);
 await p.locator('.tile').nth(0).click(); await p.waitForTimeout(300);
 await p.locator('.sizes button').nth(1).click(); await p.waitForTimeout(150);
@@ -38,7 +38,7 @@ L('review extras:', await p.evaluate(()=>Array.from(document.querySelectorAll('.
 L('tally:', await p.evaluate(()=>document.querySelector('#tally').textContent));
 
 L('\n--- added-pill jump to a 2-product category ---');
-await p.locator('#backToB1').click(); await p.waitForTimeout(300);
+await p.locator('#backB1').click(); await p.waitForTimeout(300);
 await p.locator('#tabs .tab',{hasText:'Mason Jars'}).click(); await p.waitForTimeout(300);
 await p.locator('.sizes button').nth(1).click(); await p.waitForTimeout(150);
 await p.locator('.qtys button').nth(0).click(); await p.waitForTimeout(150);
