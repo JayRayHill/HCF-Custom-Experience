@@ -235,6 +235,13 @@
   #s-b3 .screen-foot,
   #s-b4 .screen-foot { justify-content: center; }
 
+  @media (max-width: 40rem) {
+    #s-b2 .screen-foot,
+    #s-b3 .screen-foot { flex-direction: column; align-items: stretch; gap: var(--sp3); }
+    #s-b2 .screen-foot .btn--primary,
+    #s-b3 .screen-foot .btn--primary { order: -1; }
+  }
+
   /* ---------- photo setup (prototype only) ---------- */
   .photoset { background: var(--white); border-radius: var(--r-lg); box-shadow: var(--shadow-card); padding: var(--sp6); margin-top: var(--sp5); }
   .photoset[hidden] { display: none; }
@@ -490,6 +497,7 @@
   .btn--secondary { background: var(--white); color: var(--rd); border: 1px solid var(--rm); }
   .btn--secondary:hover { background: var(--rxl); }
   .btn--quiet { color: var(--g2); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; padding: var(--sp3) 0; }
+  .btn svg { width: 16px; height: 16px; flex: none; }
   .btn--block { display: flex; width: 100%; }
   .btn--lg { padding: var(--sp4) var(--sp6); font-size: 16px; }
 
@@ -758,7 +766,9 @@
 
   /* ---------- B5 ---------- */
 
-  .confirm-hero { background: var(--rxl); border-radius: var(--r-lg); padding: var(--sp10) var(--sp6); text-align: center; }
+  /* Full bleed: the section is no longer a container, so this sits outside
+     the page gutter and its own inner container holds the copy in. */
+  .confirm-hero { background: var(--rxl); padding: var(--sp10) 0; text-align: center; }
   .tick { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--ink); display: grid; place-items: center; margin: 0 auto var(--sp5); }
   .tick svg { width: 24px; height: 24px; }
   .confirm-hero .body-copy { margin-left: auto; margin-right: auto; }
@@ -929,6 +939,7 @@
     <div class="review" id="reviewList"></div>
     <p class="undo" id="undoBar" hidden></p>
     <div class="screen-foot">
+      <button type="button" class="btn btn--secondary" id="backFootB1"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to products</span></button>
       <button class="btn btn--primary" id="toB3">Continue to four quick questions</button>
     </div>
     <p class="assure">Then we'll ask where to send the quote. No payment, no obligation.</p>
@@ -952,6 +963,7 @@
       </div>
     </div>
     <div class="screen-foot">
+      <button type="button" class="btn btn--secondary" id="backFootB2"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to your quote</span></button>
       <button class="btn btn--primary" id="toB4">Continue</button>
       <p class="gate" id="b3Gate" hidden>Answer the first question to continue.</p>
     </div>
@@ -981,58 +993,62 @@
     </form>
   </section>
 
-  <section class="screen container" id="s-b5" hidden>
+  <section class="screen" id="s-b5" hidden>
     <div class="confirm-hero">
-      <div class="tick" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
-      </div>
-      <h1 class="h-section" tabindex="-1">Request <em>sent</em></h1>
-      <p class="body-copy">We've got your spec. A real person reads it and emails your price and lead times, usually within one business day.</p>
-      <p class="sent-to" id="sentTo"></p>
-      <p class="body-copy nothing-yet"><b>Nothing is printed and nothing is charged until you've seen a price and said yes.</b></p>
-    </div>
-
-    <div class="hiw-head">
-      <p class="eyebrow">How it works</p>
-      <h2 class="h-section">From here, <em>four steps</em></h2>
-    </div>
-
-    <div class="hiw hiw--4">
-      <div class="hiw-step">
-        <div class="hiw-num">01</div>
-        <h3 class="h-sm">You told us what you need</h3>
-        <p>A real spec instead of a phone call, so we can price it without a discovery call.</p>
-        <span class="hiw-now">You are here</span>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-num">02</div>
-        <h3 class="h-sm">Your quote</h3>
-        <p>We email your price and lead time. If it works for you, you say go, and only then do we start your design.</p>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-num">03</div>
-        <h3 class="h-sm">Free design proof</h3>
-        <p>We mock up your logo on the cup and send it over. Nothing prints until you approve it.</p>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-num">04</div>
-        <h3 class="h-sm">We print &amp; ship</h3>
-        <p>Once we have your approval, we print your order and ship it straight to your door.</p>
+      <div class="container">
+        <div class="tick" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
+        </div>
+        <h1 class="h-section" tabindex="-1">Request <em>sent</em></h1>
+        <p class="body-copy">We've got your spec. A real person reads it and emails your price and lead times, usually within one business day.</p>
+        <p class="sent-to" id="sentTo"></p>
+        <p class="body-copy nothing-yet"><b>Nothing is printed and nothing is charged until you've seen a price and said yes.</b></p>
       </div>
     </div>
 
-    <div class="recap">
-      <h3>What you sent us</h3>
-      <div id="recap"></div>
-    </div>
-
-    <div class="sample">
-      <div class="txt">
-        <p class="eyebrow" style="color:var(--bm)">Feel the quality first</p>
-        <h2 class="h-card">Get a <em>free sample box</em></h2>
-        <p>Specs on a screen only tell you so much. Free cups, free shipping, nothing to pay. Check the feel, the fit on your lids and the print quality while your quote is being put together.</p>
+    <div class="container">
+      <div class="hiw-head">
+        <p class="eyebrow">How it works</p>
+        <h2 class="h-section">From here, <em>four steps</em></h2>
       </div>
-      <button class="btn btn--primary btn--lg" id="sampleBtn">Send me a free box</button>
+
+      <div class="hiw hiw--4">
+        <div class="hiw-step">
+          <div class="hiw-num">01</div>
+          <h3 class="h-sm">You told us what you need</h3>
+          <p>A real spec instead of a phone call, so we can price it without a discovery call.</p>
+          <span class="hiw-now">You are here</span>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">02</div>
+          <h3 class="h-sm">Your quote</h3>
+          <p>We email your price and lead time. If it works for you, you say go, and only then do we start your design.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">03</div>
+          <h3 class="h-sm">Free design proof</h3>
+          <p>We mock up your logo on the cup and send it over. Nothing prints until you approve it.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">04</div>
+          <h3 class="h-sm">We print &amp; ship</h3>
+          <p>Once we have your approval, we print your order and ship it straight to your door.</p>
+        </div>
+      </div>
+
+      <div class="recap">
+        <h3>What you sent us</h3>
+        <div id="recap"></div>
+      </div>
+
+      <div class="sample">
+        <div class="txt">
+          <p class="eyebrow" style="color:var(--bm)">Feel the quality first</p>
+          <h2 class="h-card">Get a <em>free sample box</em></h2>
+          <p>Specs on a screen only tell you so much. Free cups, free shipping, nothing to pay. Check the feel, the fit on your lids and the print quality while your quote is being put together.</p>
+        </div>
+        <button class="btn btn--primary btn--lg" id="sampleBtn">Send me a free box</button>
+      </div>
     </div>
   </section>
 
@@ -2429,6 +2445,8 @@
   $("#backB1").onclick = function () { goBack("b1"); };
   $("#backB2").onclick = function () { goBack("b2"); };
   $("#backB3").onclick = function () { goBack("b3"); };
+  $("#backFootB1").onclick = function () { goBack("b1"); };
+  $("#backFootB2").onclick = function () { goBack("b2"); };
   $("#toB3").onclick = function () { renderQs(); syncB3(); show("b3"); };
   $("#toB4").onclick = function () {
     if (!state.answers.when) { b3Blocked(); return; }
