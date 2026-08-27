@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HCF Custom Quote Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&display=swap">
+<link rel="stylesheet" href="quote-builder.css">
+</head>
+<body>
+
+<script>
+/* Stand-in for what the Liquid section prints. Two globals, nothing else. */
+window.HCF_QUOTE_DATA = {
+  "products": [
+    {
+      "id": "sw",
+      "group": "Coffee Cups",
+      "name": "Single Wall Paper Cup",
+      "shape": "cup",
+      "cold": 0,
+      "unit": "cups",
+      "blurb": "Standard hot cup. Needs a sleeve for hot drinks.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Standard 90mm rim, the common size, so most shops' existing lids fit.",
+      "lid": "Also quote matching 90mm lids",
+      "sizes": [
+        [
+          "8 oz",
+          34,
+          58,
+          1000
+        ],
+        [
+          "10 oz",
+          36,
+          66,
+          1000
+        ],
+        [
+          "12 oz",
+          38,
+          78,
+          1000
+        ],
+        [
+          "16 oz",
+          40,
+          94,
+          1000
+        ],
+        [
+          "20 oz",
+          42,
+          104,
+          500
+        ],
+        [
+          "24 oz",
+          44,
+          112,
+          500
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "dw",
+      "group": "Coffee Cups",
+      "name": "Double Wall Paper Cup",
+      "shape": "cup",
+      "cold": 0,
+      "unit": "cups",
+      "blurb": "Insulated. No sleeve needed.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Two layers of board with an air gap, comfortable to hold without a sleeve.",
+      "lid": "Also quote matching 90mm lids",
+      "sizes": [
+        [
+          "8 oz",
+          36,
+          60,
+          500
+        ],
+        [
+          "10 oz",
+          38,
+          68,
+          500
+        ],
+        [
+          "12 oz",
+          40,
+          80,
+          500
+        ],
+        [
+          "16 oz",
+          42,
+          96,
+          500
+        ],
+        [
+          "20 oz",
+          44,
+          106,
+          500
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "clear",
+      "group": "Cold Cups",
+      "name": "Clear PET Cold Cup",
+      "shape": "pet",
+      "cold": 1,
+      "unit": "cups",
+      "blurb": "See-through plastic for iced drinks.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "See the drink through the cup: iced lattes, cold brew, layered drinks. Best with a simple 1–2 colour logo.",
+      "lid": "Also quote matching cold cup lids",
+      "sizes": [
+        [
+          "8 oz",
+          34,
+          62,
+          1000
+        ],
+        [
+          "12 oz",
+          38,
+          76,
+          1000
+        ],
+        [
+          "16 oz",
+          40,
+          90,
+          1000
+        ],
+        [
+          "20 oz",
+          42,
+          100,
+          1000
+        ],
+        [
+          "24 oz",
+          44,
+          108,
+          1000
+        ],
+        [
+          "32 oz",
+          47,
+          120,
+          500
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "cpc",
+      "group": "Cold Cups",
+      "name": "Paper Cold Cup",
+      "shape": "cup",
+      "cold": 1,
+      "unit": "cups",
+      "blurb": "Opaque paper for iced drinks, prints edge to edge.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Opaque like a hot cup. Choose this when you want full-colour artwork wrapping the whole cup.",
+      "lid": "Also quote matching cold cup lids",
+      "sizes": [
+        [
+          "12 oz",
+          38,
+          77,
+          1000
+        ],
+        [
+          "16 oz",
+          40,
+          92,
+          1000
+        ],
+        [
+          "22 oz",
+          43,
+          106,
+          1000
+        ],
+        [
+          "24 oz",
+          44,
+          110,
+          1000
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "sleeve",
+      "group": "Coffee Sleeves",
+      "name": "Cup Sleeve",
+      "shape": "sleeve",
+      "cold": 0,
+      "unit": "sleeves",
+      "blurb": "Slides onto a single wall cup. One size fits 10 to 24 oz.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Kraft board, one size, fits 10 through 24 oz. Nothing we make fits the 8 oz, so choose double wall if you want that one insulated.",
+      "sizes": [
+        [
+          "Fits 10–24 oz",
+          48,
+          54,
+          1000
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {}
+    },
+    {
+      "id": "jar",
+      "group": "Mason Jars",
+      "name": "Plastic Mason Jar",
+      "shape": "jar",
+      "cold": 1,
+      "unit": "jars",
+      "blurb": "Shatterproof jar for shakes, floats and iced drinks.",
+      "moq": 1029,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Shatterproof PET, printed direct to the jar. One case is 147 jars.",
+      "lid": "Also quote matching jar lids",
+      "sizes": [
+        [
+          "16 oz",
+          48,
+          98,
+          147
+        ]
+      ],
+      "tiers": [
+        1029,
+        2058,
+        4116,
+        8232
+      ],
+      "disc": {}
+    }
+  ],
+  "questions": [
+    {
+      "id": "when",
+      "q": "When do you need them in hand?",
+      "req": true,
+      "s": "We'll tell you right here if that's tight.",
+      "o": [
+        "2–3 weeks",
+        "About a month",
+        "2–3 months",
+        "Just planning ahead"
+      ]
+    },
+    {
+      "id": "artwork",
+      "q": "What have you got for artwork?",
+      "req": false,
+      "s": "Any of these is fine. We redraw for print at no charge.",
+      "o": [
+        "Print-ready file",
+        "A logo image",
+        "Just my sign or socials",
+        "Nothing yet, need help"
+      ]
+    },
+    {
+      "id": "use",
+      "q": "What's it for?",
+      "req": false,
+      "s": "So the right person prices it.",
+      "o": [
+        "Café or coffee shop",
+        "Restaurant",
+        "Event",
+        "Franchise group",
+        "Reselling"
+      ]
+    },
+    {
+      "id": "cadence",
+      "q": "One-time or recurring?",
+      "req": false,
+      "wide": true,
+      "s": "If it turns into a repeat order we can move you onto better repeat pricing. Nothing to sign now.",
+      "o": [
+        [
+          "One-time order",
+          "a single run"
+        ],
+        [
+          "Recurring",
+          "better repeat pricing"
+        ],
+        [
+          "Not sure",
+          "this is my first order"
+        ]
+      ]
+    }
+  ]
+};
+window.HCF_QUOTE_IMAGES = {
+  "sw": "images/sw.jpg",
+  "dw": "images/dw.jpg",
+  "clear": "images/clear.jpg",
+  "sleeve": "images/sleeve.jpg",
+  "cpc": "images/cpc.jpg",
+  "jar": "images/jar.jpg"
+};
+</script>
+
+<div class="announce">
+  <div class="container">
+    <span>We redraw your logo for print. Free proof on every order</span>
+    <a class="tel" href="tel:+14804281999">(480) 428-1999</a>
+    <span class="hrs">Mon–Thu 9am–5pm MT</span>
+    <span class="hrs-short">Mon–Thu 9–5 MT</span>
+  </div>
+</div>
+
+<header class="site">
+  <div class="container">
+    <!-- Prototype: no site to go home to, so this is a mark, not a link. On the
+         live theme this is Canopy's own header logo. -->
+    <span class="logo" aria-label="Hot Cup Factory">
+      <span class="mark" aria-hidden="true"></span>
+      <span><span class="a">Hot Cup</span><span class="b">FACTORY</span></span>
+    </span>
+    <div class="head-right">
+      <span class="savenote" id="savenote">Your progress saves automatically</span>
+      <button class="btn btn--secondary" id="talkBtn">Questions? Call us</button>
+    </div>
+  </div>
+</header>
+
+<nav class="steps" aria-label="Progress">
+  <div class="container" id="stepRail"></div>
+</nav>
+
+<main>
+
+  <section class="screen container" id="s-b1">
+    <div class="photoset" id="photoSet" hidden>
+      <div class="photoset__head">
+        <div>
+          <p class="eyebrow" style="margin-bottom:2px">Prototype tool</p>
+          <h2 class="h-card">Set product photos</h2>
+          <p style="font-size:13px;color:var(--g2);margin:6px 0 0;max-width:62ch">Pick an image for any product. It's resized in your browser and appears everywhere that product shows: tile, configurator, quote rail and review. Photos start in your browser only; <b>Save to the page</b> publishes them into the artifact itself, so anyone you send the link to sees them too.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <button class="btn btn--primary" id="photoSave">Save to the page</button>
+          <button class="btn btn--quiet" id="photoExport" style="font-size:12px">Copy all for Claude</button>
+          <button class="btn btn--secondary" id="photoClose">Done</button>
+        </div>
+      </div>
+      <div class="photoset__rows" id="photoRows"></div>
+      <div class="photoout" id="photoOut" hidden>
+        <p class="photoout__note" id="photoOutNote"></p>
+        <textarea id="photoOutText" readonly spellcheck="false" aria-label="Encoded image data to copy"></textarea>
+      </div>
+    </div>
+
+    <div class="screen-head compact">
+      <p class="eyebrow">Custom printing</p>
+      <h1 class="h-section" tabindex="-1">Build your <em>custom quote</em></h1>
+      <p class="body-copy">Pick what you need and <b>we'll email your price, usually within one business day.</b> Nothing here is a purchase.</p>
+    </div>
+
+    <div class="b1-grid">
+      <div>
+        <p class="tabs-lede" id="tabsLede">Everything we print</p>
+        <div class="tabs" id="tabs" role="group" aria-label="Product categories"></div>
+        <div class="tiles" id="tiles"></div>
+        <div class="config" id="config"></div>
+      </div>
+
+      <aside class="rail">
+        <div class="rail-head">
+          <h2 class="h-sm">Your quote request</h2>
+          <span class="rail-count" id="railCount">0</span>
+        </div>
+        <div class="rail-body" id="railBody"></div>
+        <div class="rail-foot" id="railFoot">
+          <div id="railReady" hidden>
+            <p class="tally" id="tally"></p>
+            <button class="btn btn--primary btn--block" id="toB2" style="margin-top:var(--sp3)" disabled>Review &amp; continue</button>
+            <p class="assure">No payment. We'll email your price, usually within one business day.</p>
+          </div>
+          <p class="rail-alt" id="railAlt">Not ready to spec anything?
+            <button type="button" class="linkish" id="sampleRail">Get a free sample box</button>.
+            Real cups, no obligation.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="screen container" id="s-b2" hidden>
+    <div class="backrow">
+      <button type="button" class="backlink" id="backB1"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to products</span></button>
+    </div>
+    <div class="screen-head">
+      <p class="eyebrow">Step 2</p>
+      <h1 class="h-section" tabindex="-1">Here's <em>what you picked</em></h1>
+      <p class="body-copy">Adjust anything before it goes to our team. Quantities move a whole case at a time, and each line shows how many cases that is.</p>
+      <p class="whynoprice">Custom print pricing moves with size, quantity and colour count, so there's no shelf price to show you. You'll get a written price by email, not a call-first pitch.</p>
+    </div>
+    <div class="review" id="reviewList"></div>
+    <p class="undo" id="undoBar" hidden></p>
+    <div class="screen-foot">
+      <button type="button" class="btn btn--secondary" id="backFootB1"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to products</span></button>
+      <button class="btn btn--primary" id="toB3">Continue to four quick questions</button>
+    </div>
+    <p class="assure">Then we'll ask where to send the quote. No payment, no obligation.</p>
+  </section>
+
+  <section class="screen container" id="s-b3" hidden>
+    <div class="backrow">
+      <button type="button" class="backlink" id="backB2"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to your quote</span></button>
+    </div>
+    <div class="screen-head">
+      <p class="eyebrow">Step 3</p>
+      <h1 class="h-section" tabindex="-1">A few <em>quick details</em></h1>
+      <p class="body-copy">Four quick taps. Only the first is required. They let us quote accurately instead of coming back with questions.</p>
+    </div>
+    <div class="qblock" id="qBlock"></div>
+    <div class="qblock qnotes">
+      <div class="qitem">
+        <div class="qh"><h3 class="h-sm">Anything else we should know?</h3><span class="opt">Optional</span></div>
+        <p class="qs">Lids, straws, a size you can't see here, a deadline, a question about your logo. Anything at all.</p>
+        <textarea id="qNote" rows="3" placeholder="Type anything here and it goes straight to the rep with your spec."></textarea>
+      </div>
+    </div>
+    <div class="screen-foot">
+      <button type="button" class="btn btn--secondary" id="backFootB2"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to your quote</span></button>
+      <button class="btn btn--primary" id="toB4">Continue</button>
+      <p class="gate" id="b3Gate" hidden>Answer the first question to continue.</p>
+    </div>
+    <p class="assure">No payment, no obligation. The next screen is just where to send your quote.</p>
+  </section>
+
+  <section class="screen container" id="s-b4" hidden>
+    <div class="backrow">
+      <button type="button" class="backlink" id="backB3"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3.25 5.25 8 10 12.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back to the questions</span></button>
+    </div>
+    <div class="screen-head">
+      <p class="eyebrow">Last step</p>
+      <h1 class="h-section" tabindex="-1">Where do we <em>send it?</em></h1>
+      <p class="body-copy">A real person reads this and emails your quote, usually within one business day. We're open Mon–Thu 9am–5pm MT, so anything sent after Thursday comes back Monday.</p>
+      <p class="whynoprice">There's no shelf price for custom print, so this is how you get one. Your quote arrives by email either way.</p>
+    </div>
+    <form class="form" id="contactForm" novalidate>
+      <div class="frow"><label for="f-name">Your name <span class="req">Required</span></label><input id="f-name" autocomplete="name"><p class="err" id="e-name" hidden></p></div>
+      <div class="frow"><label for="f-biz">Business name <span class="req">Required</span></label><input id="f-biz" autocomplete="organization"><p class="err" id="e-biz" hidden></p></div>
+      <div class="frow"><label for="f-email">Email <span class="req">Required</span></label><input id="f-email" type="email" autocomplete="email"><p class="hint">We'll send a copy of this request so you have it on file.</p><p class="err" id="e-email" hidden></p></div>
+      <div class="frow"><label for="f-phone">Phone <span class="req">Required</span></label><input id="f-phone" type="tel" autocomplete="tel"><p class="hint">In case a detail on your spec needs a two minute call instead of three emails.</p><p class="err" id="e-phone" hidden></p></div>
+      <div class="screen-foot">
+        <button class="btn btn--primary btn--lg" type="submit" id="sendBtn">Send my request</button>
+        <p class="gate" id="formGate" hidden></p>
+      </div>
+      <p class="assure">We use these to send your quote and nothing else. No marketing emails unless you ask, and we never share your details. No payment now, and no obligation.</p>
+    </form>
+  </section>
+
+  <section class="screen" id="s-b5" hidden>
+    <div class="confirm-hero">
+      <div class="container">
+        <div class="tick" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
+        </div>
+        <h1 class="h-section" tabindex="-1">Request <em>sent</em></h1>
+        <p class="body-copy">We've got your spec. A real person reads it and emails your price and lead times, usually within one business day.</p>
+        <p class="sent-to" id="sentTo"></p>
+        <p class="body-copy nothing-yet"><b>Nothing is printed and nothing is charged until you've seen a price and said yes.</b></p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="hiw-head">
+        <p class="eyebrow">How it works</p>
+        <h2 class="h-section">From here, <em>four steps</em></h2>
+      </div>
+
+      <div class="hiw hiw--4">
+        <div class="hiw-step">
+          <div class="hiw-num">01</div>
+          <h3 class="h-sm">You told us what you need</h3>
+          <p>A real spec instead of a phone call, so we can price it without a discovery call.</p>
+          <span class="hiw-now">You are here</span>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">02</div>
+          <h3 class="h-sm">Your quote</h3>
+          <p>We email your price and lead time. If it works for you, you say go, and only then do we start your design.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">03</div>
+          <h3 class="h-sm">Free design proof</h3>
+          <p>We mock up your logo on the cup and send it over. Nothing prints until you approve it.</p>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">04</div>
+          <h3 class="h-sm">We print &amp; ship</h3>
+          <p>Once we have your approval, we print your order and ship it straight to your door.</p>
+        </div>
+      </div>
+
+      <div class="recap">
+        <h3>What you sent us</h3>
+        <div id="recap"></div>
+      </div>
+
+      <div class="sample">
+        <div class="txt">
+          <p class="eyebrow" style="color:var(--bm)">Feel the quality first</p>
+          <h2 class="h-card">Get a <em>free sample box</em></h2>
+          <p>Specs on a screen only tell you so much. Free cups, free shipping, nothing to pay. Check the feel, the fit on your lids and the print quality while your quote is being put together.</p>
+        </div>
+        <button class="btn btn--primary btn--lg" id="sampleBtn">Send me a free box</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="container">
+    <span><b>Hot Cup Factory</b> · Custom printed cups and packaging</span>
+    <a href="tel:+14804281999">(480) 428-1999</a>
+    <span>Mon–Thu 9am–5pm MT</span>
+    <span class="foot-links"><a href="#" onclick="return false">Privacy</a> · <a href="#" onclick="return false">Terms</a></span>
+  </div>
+</footer>
+
+<div class="mobar" id="mobar" hidden>
+  <div class="container row">
+    <div class="info"><b id="moUnits"></b><span id="moProds"></span></div>
+    <button class="btn btn--primary" id="moNext">Review</button>
+  </div>
+</div>
+
+<script src="quote-builder.js"></script>
+</body>
+</html>

@@ -5,8 +5,8 @@ const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await ctx.newPage();
 const pickSize = async (n) => {
   /* Sleeves and jars come in one size, so there is no size row to click. */
-  if (await p.locator('.sizes button').count() === 0) return;
-  await p.locator('.sizes button').nth(n).click(); await p.waitForTimeout(150);
+  if (await page.locator('.sizes button').count() === 0) return;
+  await page.locator('.sizes button').nth(n).click(); await page.waitForTimeout(150);
 };
 const errs = [];
 page.on('pageerror', e => errs.push('PAGEERROR: ' + e.message));

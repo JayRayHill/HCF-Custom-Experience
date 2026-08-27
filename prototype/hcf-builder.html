@@ -2555,6 +2555,43 @@
     };
   });
 
+  /* The whole request as one object, in the shape a submit endpoint wants.
+     Quantities stay an ARRAY on every line: they are alternatives to price
+     against each other, never a sum, so nothing downstream may add them up. */
+  function buildPayload() {
+    var val = function (id) { return ($("#" + id).value || "").trim(); };
+    return {
+      ref: requestRef(),
+      contact: {
+        name: val("f-name"),
+        business: val("f-biz"),
+        email: val("f-email"),
+        phone: val("f-phone")
+      },
+      lines: state.quote.map(function (q) {
+        var p = prod(q.pid);
+        return {
+          productId: q.pid,
+          product: q.name,
+          size: q.size,
+          quantities: q.qtys.slice(),      /* alternatives, never a total */
+          unitsPerCase: q.per,
+          cases: q.qtys.map(function (n) { return n / q.per; }),
+          quantityUnknown: !!q.unsure,
+          alsoQuoteLids: state.lids.indexOf(q.pid) > -1,
+          leadTime: p ? p.lead : ""
+        };
+      }),
+      answers: {
+        needBy: state.answers.when || "",
+        artwork: state.answers.artwork || "",
+        useCase: state.answers.use || "",
+        cadence: state.answers.cadence || ""
+      },
+      note: (state.note || "").trim()
+    };
+  }
+
   $("#contactForm").onsubmit = function (e) {
     e.preventDefault();
     if (state.sent) return;   /* Back onto this form must not send a second copy */
@@ -2581,6 +2618,20 @@
       catch (e2) { window.scrollTo(0, top); }
       try { first.focus({ preventScroll: true }); } catch (e3) { first.focus(); }
       return;
+    }
+
+    /* ──────────────────────────────────────────────────────────────────
+       SUBMIT SEAM — the one place the live site differs.
+
+       Everything above this line builds `payload`. On the theme, POST it to
+       your server-side route and only advance to b5 once that resolves; the
+       route holds the HubSpot private-app token, which must never reach the
+       browser. Nothing here leaves the page.
+       ────────────────────────────────────────────────────────────────── */
+    var payload = buildPayload();
+    window.HCF_QUOTE_LAST_PAYLOAD = payload;      /* inspectable in the console */
+    if (typeof window.HCF_QUOTE_SUBMIT === "function") {
+      try { window.HCF_QUOTE_SUBMIT(payload); } catch (e4) {}
     }
 
     state.sent = true;        /* set before clearing so nothing can re-save it */

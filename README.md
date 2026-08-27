@@ -20,6 +20,8 @@ integration work started.
 | `docs/build-review.html` | Stage 3 — visual design review. |
 | `docs/ux-audit.html` | A seven-lens UX audit run in persona (a coffee-shop owner who has never heard of HCF). 36 findings, all implemented. |
 | `docs/integration-spec.html` | How this connects to the real site: data flow, Shopify metafields, HubSpot storage, build order. |
+| `handoff/` | **The port package.** The prototype split into CSS, markup, behaviour, catalogue and image files, plus `handoff/README.md` — what each file is, the two globals the theme prints, the submit payload, what to strip and what must not change. Start here when building the live section. |
+| `tools/split.py` | Regenerates `handoff/` from the prototype. One source; edit the prototype, rerun this. |
 | `tests/*.mjs` | Playwright scripts. See below. |
 
 ## Running the prototype
@@ -35,6 +37,10 @@ Two things are prototype scaffolding and come out at migration:
 - the photo-swap tool, gated behind `?photos=1`
 - two `alert()` stubs standing in for a real submit endpoint
 
+Search the source for `SUBMIT SEAM` for the one place the live site differs.
+Everything above it builds the payload; `window.HCF_QUOTE_LAST_PAYLOAD` holds
+the last one built.
+
 ## Running the tests
 
 The scripts drive the prototype in Chromium via Playwright.
@@ -48,13 +54,17 @@ node tests/regress.mjs    # session persistence and history behaviour
 node tests/mob.mjs        # mobile layout measurements at 375px
 ```
 
-They resolve the prototype relative to their own location, so they run from any
+`tests/handoff/` runs the same assertions against `handoff/preview.html`, which
+reassembles the split files — so the split is verified rather than assumed.
+
+They resolve their target relative to their own location, so they run from any
 directory. They import Playwright by absolute path
 (`/opt/node22/lib/node_modules/playwright/index.mjs`) — change that line if your
 install lives elsewhere.
 
 Current state: 39/39 in `final.mjs`, 15/15 in `back.mjs`, 15/15 in `phone.mjs`,
-no horizontal overflow at any width on any screen, no console errors.
+against both the prototype and the split handoff files. No horizontal overflow
+at any width on any screen, no console errors.
 
 ---
 

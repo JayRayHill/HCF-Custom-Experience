@@ -1,0 +1,355 @@
+{
+  "products": [
+    {
+      "id": "sw",
+      "group": "Coffee Cups",
+      "name": "Single Wall Paper Cup",
+      "shape": "cup",
+      "cold": 0,
+      "unit": "cups",
+      "blurb": "Standard hot cup. Needs a sleeve for hot drinks.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Standard 90mm rim, the common size, so most shops' existing lids fit.",
+      "lid": "Also quote matching 90mm lids",
+      "sizes": [
+        [
+          "8 oz",
+          34,
+          58,
+          1000
+        ],
+        [
+          "10 oz",
+          36,
+          66,
+          1000
+        ],
+        [
+          "12 oz",
+          38,
+          78,
+          1000
+        ],
+        [
+          "16 oz",
+          40,
+          94,
+          1000
+        ],
+        [
+          "20 oz",
+          42,
+          104,
+          500
+        ],
+        [
+          "24 oz",
+          44,
+          112,
+          500
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "dw",
+      "group": "Coffee Cups",
+      "name": "Double Wall Paper Cup",
+      "shape": "cup",
+      "cold": 0,
+      "unit": "cups",
+      "blurb": "Insulated. No sleeve needed.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Two layers of board with an air gap, comfortable to hold without a sleeve.",
+      "lid": "Also quote matching 90mm lids",
+      "sizes": [
+        [
+          "8 oz",
+          36,
+          60,
+          500
+        ],
+        [
+          "10 oz",
+          38,
+          68,
+          500
+        ],
+        [
+          "12 oz",
+          40,
+          80,
+          500
+        ],
+        [
+          "16 oz",
+          42,
+          96,
+          500
+        ],
+        [
+          "20 oz",
+          44,
+          106,
+          500
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "clear",
+      "group": "Cold Cups",
+      "name": "Clear PET Cold Cup",
+      "shape": "pet",
+      "cold": 1,
+      "unit": "cups",
+      "blurb": "See-through plastic for iced drinks.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "See the drink through the cup: iced lattes, cold brew, layered drinks. Best with a simple 1–2 colour logo.",
+      "lid": "Also quote matching cold cup lids",
+      "sizes": [
+        [
+          "8 oz",
+          34,
+          62,
+          1000
+        ],
+        [
+          "12 oz",
+          38,
+          76,
+          1000
+        ],
+        [
+          "16 oz",
+          40,
+          90,
+          1000
+        ],
+        [
+          "20 oz",
+          42,
+          100,
+          1000
+        ],
+        [
+          "24 oz",
+          44,
+          108,
+          1000
+        ],
+        [
+          "32 oz",
+          47,
+          120,
+          500
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "cpc",
+      "group": "Cold Cups",
+      "name": "Paper Cold Cup",
+      "shape": "cup",
+      "cold": 1,
+      "unit": "cups",
+      "blurb": "Opaque paper for iced drinks, prints edge to edge.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Opaque like a hot cup. Choose this when you want full-colour artwork wrapping the whole cup.",
+      "lid": "Also quote matching cold cup lids",
+      "sizes": [
+        [
+          "12 oz",
+          38,
+          77,
+          1000
+        ],
+        [
+          "16 oz",
+          40,
+          92,
+          1000
+        ],
+        [
+          "22 oz",
+          43,
+          106,
+          1000
+        ],
+        [
+          "24 oz",
+          44,
+          110,
+          1000
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {
+        "10000": 17,
+        "30000": 35,
+        "50000": 43
+      }
+    },
+    {
+      "id": "sleeve",
+      "group": "Coffee Sleeves",
+      "name": "Cup Sleeve",
+      "shape": "sleeve",
+      "cold": 0,
+      "unit": "sleeves",
+      "blurb": "Slides onto a single wall cup. One size fits 10 to 24 oz.",
+      "moq": 5000,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Kraft board, one size, fits 10 through 24 oz. Nothing we make fits the 8 oz, so choose double wall if you want that one insulated.",
+      "sizes": [
+        [
+          "Fits 10–24 oz",
+          48,
+          54,
+          1000
+        ]
+      ],
+      "tiers": [
+        5000,
+        10000,
+        30000,
+        50000
+      ],
+      "disc": {}
+    },
+    {
+      "id": "jar",
+      "group": "Mason Jars",
+      "name": "Plastic Mason Jar",
+      "shape": "jar",
+      "cold": 1,
+      "unit": "jars",
+      "blurb": "Shatterproof jar for shakes, floats and iced drinks.",
+      "moq": 1029,
+      "lead": "4–6 weeks",
+      "leadMax": 6,
+      "note": "Shatterproof PET, printed direct to the jar. One case is 147 jars.",
+      "lid": "Also quote matching jar lids",
+      "sizes": [
+        [
+          "16 oz",
+          48,
+          98,
+          147
+        ]
+      ],
+      "tiers": [
+        1029,
+        2058,
+        4116,
+        8232
+      ],
+      "disc": {}
+    }
+  ],
+  "questions": [
+    {
+      "id": "when",
+      "q": "When do you need them in hand?",
+      "req": true,
+      "s": "We'll tell you right here if that's tight.",
+      "o": [
+        "2–3 weeks",
+        "About a month",
+        "2–3 months",
+        "Just planning ahead"
+      ]
+    },
+    {
+      "id": "artwork",
+      "q": "What have you got for artwork?",
+      "req": false,
+      "s": "Any of these is fine. We redraw for print at no charge.",
+      "o": [
+        "Print-ready file",
+        "A logo image",
+        "Just my sign or socials",
+        "Nothing yet, need help"
+      ]
+    },
+    {
+      "id": "use",
+      "q": "What's it for?",
+      "req": false,
+      "s": "So the right person prices it.",
+      "o": [
+        "Café or coffee shop",
+        "Restaurant",
+        "Event",
+        "Franchise group",
+        "Reselling"
+      ]
+    },
+    {
+      "id": "cadence",
+      "q": "One-time or recurring?",
+      "req": false,
+      "wide": true,
+      "s": "If it turns into a repeat order we can move you onto better repeat pricing. Nothing to sign now.",
+      "o": [
+        [
+          "One-time order",
+          "a single run"
+        ],
+        [
+          "Recurring",
+          "better repeat pricing"
+        ],
+        [
+          "Not sure",
+          "this is my first order"
+        ]
+      ]
+    }
+  ]
+}
