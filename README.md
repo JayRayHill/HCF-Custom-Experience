@@ -49,6 +49,7 @@ The scripts drive the prototype in Chromium via Playwright.
 node tests/final.mjs      # 39 assertions covering the audit findings and the data corrections
 node tests/back.mjs       # back navigation, and its parity with the browser's own
 node tests/phone.mjs      # the required phone field
+node tests/added.mjs      # the confirmation panel after an add, on every family
 node tests/run3.mjs       # horizontal-overflow sweep, 360–1440px, all five screens
 node tests/regress.mjs    # session persistence and history behaviour
 node tests/mob.mjs        # mobile layout measurements at 375px
@@ -63,7 +64,7 @@ directory. They import Playwright by absolute path
 install lives elsewhere.
 
 Current state: 39/39 in `final.mjs`, 15/15 in `back.mjs`, 15/15 in `phone.mjs`,
-against both the prototype and the split handoff files. No horizontal overflow
+11/11 in `added.mjs`, against both the prototype and the split handoff files. No horizontal overflow
 at any width on any screen, no console errors.
 
 ---

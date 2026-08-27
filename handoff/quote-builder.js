@@ -614,7 +614,11 @@
     /* Sleeves and jars each come in one size now, so the step is a question
        with one answer. Pick it for them and render nothing. */
     var oneSize = p.sizes.length === 1;
-    if (oneSize && state.size === null) state.size = 0;
+    /* Not while the just-added panel is up. That panel renders on
+       `state.size === null`, so auto-selecting here swallowed it: adding a
+       sleeve or a jar skipped the one confirmation the builder exists for
+       and dropped the customer straight back into an empty configurator. */
+    if (oneSize && state.size === null && !state.justAdded) state.size = 0;
 
     var f1 = document.createElement("div");
     f1.innerHTML = '<div class="fieldlabel">Size</div>';

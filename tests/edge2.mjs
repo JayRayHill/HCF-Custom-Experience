@@ -44,8 +44,11 @@ L('tally:', await p.evaluate(()=>document.querySelector('#tally').textContent));
 
 L('\n--- added-pill jump to a 2-product category ---');
 await p.locator('#backB1').click(); await p.waitForTimeout(300);
-await p.locator('#tabs .tab',{hasText:'Mason Jars'}).click(); await p.waitForTimeout(300);
-await pickSize(1);
+/* Sleeves, not jars: the jar is already on the quote and comes in one size
+   now, so re-picking it is an edit, and an edit is not the moment the
+   just-added panel is for. */
+await p.locator('#tabs .tab',{hasText:'Coffee Sleeves'}).click(); await p.waitForTimeout(300);
+await pickSize(0);
 await p.locator('.qtys button').nth(0).click(); await p.waitForTimeout(150);
 await p.locator('.config-foot .btn--primary').click(); await p.waitForTimeout(350);
 await p.locator('.added__pills .tab',{hasText:'Cold Cups'}).click(); await p.waitForTimeout(800);
